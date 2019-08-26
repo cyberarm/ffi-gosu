@@ -1,7 +1,11 @@
 require "ffi"
 require_relative "gosu/version"
+require_relative "gosu/constants"
 require_relative "gosu/window"
 require_relative "gosu/image"
+require_relative "gosu/font"
+require_relative "gosu/color"
+require_relative "gosu/text_input"
 
 module Gosu
   extend FFI::Library
@@ -11,10 +15,11 @@ module Gosu
   callback :_callback_with_block, [:pointer], :void
 
   # Argumentless functions that don't need nice pretty argument handling
-  attach_function :fps,          :Gosu_fps,          [], :int
-  attach_function :flush,        :Gosu_flush,        [], :void
-  attach_function :language,     :Gosu_language,     [], :string
-  attach_function :milliseconds, :Gosu_milliseconds, [], :long
+  attach_function :fps,          :Gosu_fps,                    [], :int
+  attach_function :flush,        :Gosu_flush,                  [], :void
+  attach_function :language,     :Gosu_language,               [], :string
+  attach_function :milliseconds, :Gosu_milliseconds,           [], :long
+  attach_function :default_font_name, :Gosu_default_font_name, [], :string
 
   # attach_function :_transform, :Gosu_transform, [:double, :double, :_callback_with_block], :void
   attach_function :_translate, :Gosu_translate, [:double, :double, :_callback_with_block], :void

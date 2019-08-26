@@ -1,0 +1,2 @@
+module Gosu
+end

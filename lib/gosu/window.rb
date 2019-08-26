@@ -103,7 +103,7 @@ module Gosu
     end
 
     def text_input=(text_input)
-      raise ArgumentError, "text_input must be a Gosu::TextInput" unless text_input.is_a?(Gosu::TextInput)
+      raise ArgumentError, "text_input must be a Gosu::TextInput" unless text_input.is_a?(Gosu::TextInput) || text_input == nil
     end
 
     def update_interval

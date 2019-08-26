@@ -15,6 +15,10 @@ module Gosu
       @__image = _create_image(filename, flags)
     end
 
+    def __pointer
+      @__image
+    end
+
     def width
       _image_width(@__image)
     end
