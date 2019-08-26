@@ -1,11 +1,11 @@
 
 lib = File.expand_path("../lib", __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require "ffi/gosu/version"
+require "gosu/version"
 
 Gem::Specification.new do |spec|
   spec.name          = "ffi-gosu"
-  spec.version       = Ffi::Gosu::VERSION
+  spec.version       = Gosu::VERSION
   spec.authors       = ["Cyberarm"]
   spec.email         = ["matthewlikesrobots@gmail.com"]
 
