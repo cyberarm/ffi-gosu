@@ -44,17 +44,19 @@ module Gosu
     attach_function :_window_resize,              :Gosu_Window_resize,              [:pointer, :int, :int, :bool], :void
     attach_function :_window_fullscreen,          :Gosu_Window_fullscreen,          [:pointer],                    :bool
 
-    def initialize(width, height, fullscreen: false, update_interval: 16.66666667, resizable: false)
+
+    def initialize(width, height, _fullscreen = nil, fullscreen: false, update_interval: 16.66666667, resizable: false)
+      fullscreen = _fullscreen if _fullscreen
       @__window = _create_window(width, height, fullscreen, update_interval, resizable)
       @__text_input = nil
 
-      @__update_proc       = proc { update }
-      @__draw_proc         = proc { draw }
-      @__button_down_proc  = proc { |id| button_down(id) }
-      @__button_up_proc    = proc { |id| button_up(id) }
+      @__update_proc       = proc { protected_update }
+      @__draw_proc         = proc { protected_draw }
+      @__button_down_proc  = proc { |id| protected_button_down(id) }
+      @__button_up_proc    = proc { |id| protected_button_up(id) }
       @__drop_proc         = proc { |filename| drop(filename) }
-      @__needs_redraw_proc = proc { needs_redraw? }
-      @__needs_cursor_proc = proc { needs_cursor? }
+      @__needs_redraw_proc = proc { protected_needs_redraw? }
+      @__needs_cursor_proc = proc { protected_needs_cursor? }
       @__close_proc        = proc { close }
 
       _window_set_update(@__window, @__update_proc)
@@ -70,6 +72,12 @@ module Gosu
     # Returns FFI pointer of C side Gosu::Window
     def __pointer
       @__window
+    end
+
+    def protected_draw
+      super
+
+      $gosu_gl_blocks.clear
     end
 
     def update; end
@@ -148,6 +156,10 @@ module Gosu
 
     def show
       _window_show(@__window)
+
+      if defined?(@__exception)
+        raise @__exception
+      end
     end
 
     def close

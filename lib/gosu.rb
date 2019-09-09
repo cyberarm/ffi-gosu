@@ -1,4 +1,7 @@
 require "ffi"
+
+require_relative "gosu/numeric"
+
 require_relative "gosu/version"
 require_relative "gosu/constants"
 require_relative "gosu/window"
@@ -6,6 +9,9 @@ require_relative "gosu/image"
 require_relative "gosu/font"
 require_relative "gosu/color"
 require_relative "gosu/text_input"
+
+require_relative "gosu/compat"
+
 
 module Gosu
   extend FFI::Library
@@ -27,6 +33,7 @@ module Gosu
   attach_function :_scale,     :Gosu_scale,     [:double, :double, :double, :double, :_callback_with_block], :void
   attach_function :_clip_to,   :Gosu_clip_to,   [:double, :double, :double, :double, :_callback_with_block], :void
 
+  attach_function :_gl_z,    :Gosu_gl_z,  [:_callback],            :void
   attach_function :_gl,      :Gosu_gl,    [:_callback],            :void
   attach_function :_render, :Gosu_render, [:_callback_with_block], :pointer
   attach_function :_record, :Gosu_record, [:_callback_with_block], :pointer
@@ -36,7 +43,7 @@ module Gosu
   attach_function :button_char_to_id, :Gosu_button_char_to_id, [:string], :uint32
 
   attach_function :_draw_line, :Gosu_draw_line, [:double, :double, :uint32, :double, :double, :uint32, :double, :uint32], :void
-  attach_function :_draw_quad, :Gosu_draw_quad, [:double, :double, :uint32, :double, :double, :uint32, :double, :uint32,
+  attach_function :_draw_quad, :Gosu_draw_quad, [:double, :double, :uint32, :double, :double, :uint32,
                                                  :double, :double, :uint32, :double, :double, :uint32, :double, :uint32], :void
   attach_function :_draw_rect, :Gosu_draw_rect, [:double, :double, :double, :double, :uint32, :double, :uint32],          :void
 
@@ -53,7 +60,16 @@ module Gosu
   attach_function :_available_height, :Gosu_available_height, [:pointer], :uint32
 
   def self.gl(z = nil, &block)
-    _gl(block)
+    $gosu_gl_blocks ||= []
+    $gosu_gl_blocks << block
+
+    raise "Block not given!" unless block
+
+    if z
+      _gl_z(z, block)
+    else
+      _gl(block)
+    end
   end
 
   def self.render(width, height, retro: false, &block)
@@ -85,20 +101,20 @@ module Gosu
     _button_down(id)
   end
 
-  def self.draw_line(x1, y1, c1, x2, y2, c2, z = 0, mode = 0x0)
-    _draw_line(x1, y1, c1, x2, y2, c2, z, mode)
+  def self.draw_line(x1, y1, c1, x2, y2, c2, z = 0, mode = :default)
+    _draw_line(x1, y1, color_to_drawop(c1), x2, y2, color_to_drawop(c2), z, Gosu.mode_to_mask(mode))
   end
 
   def self.draw_quad(x1, y1, c1, x2, y2, c2,
                      x3, y3, c3, x4, y4, c4,
-                     z = 0, mode = 0x0)
-    _draw_quad(x1, y1, c1, x2, y2, c2,
-               x3, y3, c3, x4, y4, c4,
-               z, mode)
+                     z = 0, mode = :default)
+    _draw_quad(x1, y1, color_to_drawop(c1), x2, y2, color_to_drawop(c2),
+               x3, y3, color_to_drawop(c3), x4, y4, color_to_drawop(c4),
+               z, Gosu.mode_to_mask(mode))
   end
 
-  def self.draw_rect(x, y, width, height, c, z = 0, mode = 0xffffffff)
-    _draw_rect(x, y, width, height, c, z, mode)
+  def self.draw_rect(x, y, width, height, c, z = 0, mode = :default)
+    _draw_rect(x, y, width, height, color_to_drawop(c), z, Gosu.mode_to_mask(mode))
   end
 
   def self.available_width(window = nil)
@@ -115,5 +131,20 @@ module Gosu
 
   def self.screen_height(window = nil)
     _screen_height(window)
+  end
+
+  def self.color_to_drawop(color)
+    color.is_a?(Gosu::Color) ? color.abgr : color
+  end
+
+  def self.mode_to_mask(mode)
+    case mode
+    when :default
+      0x0
+    when :additive
+      0x0
+    else
+      raise ArgumentError, "No such mode: #{mode}"
+    end
   end
 end

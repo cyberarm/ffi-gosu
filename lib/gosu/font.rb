@@ -48,28 +48,28 @@ module Gosu
       _font_markup_width(@__font, text)
     end
 
-    def draw(text, x, y, z, scale_x = 1, scale_y = 1, c = Gosu::Color::WHITE, mode = 0x0)
+    def draw(text, x, y, z, scale_x = 1, scale_y = 1, c = Gosu::Color::WHITE, mode = :default)
       raise "Using Gosu::Font.draw is deprecated, use Gosu::Font.draw_text or Gosu::Font.draw_markup"
     end
 
-    def draw_rot(text, x, y, z, angle, scale_x = 1, scale_y = 1, c = Gosu::Color::WHITE, mode = 0x0)
-      Gosu.rotate(angle, x, y) { draw_markup(text, x, y, z, scale_x, scale_y, c, mode) }
+    def draw_rot(text, x, y, z, angle, scale_x = 1, scale_y = 1, c = Gosu::Color::WHITE, mode = :default)
+      Gosu.rotate(angle, x, y) { draw_markup(text, x, y, z, scale_x, scale_y, Gosu.color_to_drawop(c), Gosu.mode_to_mask(mode)) }
     end
 
-    def draw_text(text, x, y, z, scale_x = 1, scale_y = 1, c = Gosu::Color::WHITE, mode = 0x0)
-      _font_draw_text(@__font, text, x, y, z, scale_x, scale_y, c, mode)
+    def draw_text(text, x, y, z, scale_x = 1, scale_y = 1, c = Gosu::Color::WHITE, mode = :default)
+      _font_draw_text(@__font, text, x, y, z, scale_x, scale_y, Gosu.color_to_drawop(c), Gosu.mode_to_mask(mode))
     end
 
-    def draw_markup(text, x, y, z, scale_x = 1, scale_y = 1, c = Gosu::Color::WHITE, mode = 0x0)
-      _font_draw_markup(@__font, text, x, y, z, scale_x, scale_y, c, mode)
+    def draw_markup(text, x, y, z, scale_x = 1, scale_y = 1, c = Gosu::Color::WHITE, mode = :default)
+      _font_draw_markup(@__font, text, x, y, z, scale_x, scale_y, Gosu.color_to_drawop(c), Gosu.mode_to_mask(mode))
     end
 
-    def draw_text_rel(text, x, y, z, rel_x, rel_y, scale_x = 1, scale_y = 1, c = Gosu::Color::WHITE, mode = 0x0)
-      _font_draw_text_rel(@__font, text, x, y, z, rel_x, rel_y, scale_x, scale_y, c, mode)
+    def draw_text_rel(text, x, y, z, rel_x, rel_y, scale_x = 1, scale_y = 1, c = Gosu::Color::WHITE, mode = :default)
+      _font_draw_text_rel(@__font, text, x, y, z, rel_x, rel_y, scale_x, scale_y, Gosu.color_to_drawop(c), Gosu.mode_to_mask(mode))
     end
 
-    def draw_markup_rel(text, x, y, z, rel_x, rel_y, scale_x = 1, scale_y = 1, c = Gosu::Color::WHITE, mode = 0x0)
-      _font_draw_markup_rel(@__font, text, x, y, z, rel_x, rel_y, scale_x, scale_y, c, mode)
+    def draw_markup_rel(text, x, y, z, rel_x, rel_y, scale_x = 1, scale_y = 1, c = Gosu::Color::WHITE, mode = :default)
+      _font_draw_markup_rel(@__font, text, x, y, z, rel_x, rel_y, scale_x, scale_y, Gosu.color_to_drawop(c), Gosu.mode_to_mask(mode))
     end
 
     def set_image(codepoint, flags, image)
