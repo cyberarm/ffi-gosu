@@ -20,9 +20,17 @@ module Gosu
     def self.load_tiles(filename, tile_width ,tile_height, options = {})
     end
 
-    def initialize(filename, retro: false)
+    def initialize(filename_or_pointer, retro: false)
       flags = 0x00000000
-      @__image = _create_image(filename, flags)
+
+      if filename_or_pointer.is_a?(String)
+        @__image = _create_image(filename_or_pointer, flags)
+
+      elsif filename_or_pointer.is_a?(FFI::Pointer)
+        @__image = filename_or_pointer
+      else
+        raise ArgumentError
+      end
     end
 
     def __pointer

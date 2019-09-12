@@ -24,8 +24,8 @@ module Gosu
 
     attach_function :_font_set_image, :Gosu_Font_set_image, [:pointer, :string, :uint32, :pointer], :void
 
-    def initialize(height, name: Gosu.default_font_name, flags: 0x0)
-      @__font = _create_font(height, name, flags)
+    def initialize(height, name: Gosu.default_font_name, bold: false, italic: false, underline: false)
+      @__font = _create_font(height, name, 0x0)
     end
 
     def __pointer

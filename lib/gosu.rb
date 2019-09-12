@@ -33,10 +33,10 @@ module Gosu
   attach_function :_scale,     :Gosu_scale,     [:double, :double, :double, :double, :_callback_with_block], :void
   attach_function :_clip_to,   :Gosu_clip_to,   [:double, :double, :double, :double, :_callback_with_block], :void
 
-  attach_function :_gl_z,    :Gosu_gl_z,  [:_callback],            :void
-  attach_function :_gl,      :Gosu_gl,    [:_callback],            :void
-  attach_function :_render, :Gosu_render, [:_callback_with_block], :pointer
-  attach_function :_record, :Gosu_record, [:_callback_with_block], :pointer
+  attach_function :_gl_z,    :Gosu_gl_z,  [:_callback],                                 :void
+  attach_function :_gl,      :Gosu_gl,    [:_callback],                                 :void
+  attach_function :_render, :Gosu_render, [:int, :int, :_callback_with_block, :uint32], :pointer
+  attach_function :_record, :Gosu_record, [:int, :int, :_callback_with_block],          :pointer
 
   attach_function :_button_down, :Gosu_button_down, [:uint32], :bool
   attach_function :button_id_to_char, :Gosu_button_id_to_char, [:uint32], :string
@@ -73,11 +73,11 @@ module Gosu
   end
 
   def self.render(width, height, retro: false, &block)
-    _render(block)
+    Gosu::Image.new(_render(width, height, block, 0x00000000))
   end
 
   def self.record(width, height, &block)
-    _record(block)
+    Gosu::Image.new(_record(width, height, block))
   end
 
   def self.translate(x, y, &block)
