@@ -9,6 +9,7 @@ require_relative "gosu/image"
 require_relative "gosu/font"
 require_relative "gosu/color"
 require_relative "gosu/text_input"
+require_relative "gosu/gl_tex_info"
 
 require_relative "gosu/compat"
 
@@ -42,10 +43,12 @@ module Gosu
   attach_function :button_id_to_char, :Gosu_button_id_to_char, [:uint32], :string
   attach_function :button_char_to_id, :Gosu_button_char_to_id, [:string], :uint32
 
-  attach_function :_draw_line, :Gosu_draw_line, [:double, :double, :uint32, :double, :double, :uint32, :double, :uint32], :void
-  attach_function :_draw_quad, :Gosu_draw_quad, [:double, :double, :uint32, :double, :double, :uint32,
-                                                 :double, :double, :uint32, :double, :double, :uint32, :double, :uint32], :void
-  attach_function :_draw_rect, :Gosu_draw_rect, [:double, :double, :double, :double, :uint32, :double, :uint32],          :void
+  attach_function :_draw_line, :Gosu_draw_line,         [:double, :double, :uint32, :double, :double, :uint32, :double, :uint32], :void
+  attach_function :_draw_quad, :Gosu_draw_quad,         [:double, :double, :uint32, :double, :double, :uint32,
+                                                         :double, :double, :uint32, :double, :double, :uint32, :double, :uint32], :void
+  attach_function :_draw_triangle, :Gosu_draw_triangle, [:double, :double, :uint32, :double, :double, :uint32,
+                                                         :double, :double, :uint32, :double, :uint32],                            :void
+  attach_function :_draw_rect, :Gosu_draw_rect,         [:double, :double, :double, :double, :uint32, :double, :uint32],          :void
 
   attach_function :offset_x,   :Gosu_offset_y,   [:double, :double],                   :double
   attach_function :offset_y,   :Gosu_offset_y,   [:double, :double],                   :double
@@ -113,6 +116,11 @@ module Gosu
                z, Gosu.mode_to_mask(mode))
   end
 
+  def self.draw_triangle(x1, y1, c1, x2, y2, c2, x3, y3, c3, z = 0, mode = :default)
+    _draw_triangle(x1, y1, color_to_drawop(c1), x2, y2, color_to_drawop(c2),
+               x3, y3, color_to_drawop(c3), z, Gosu.mode_to_mask(mode))
+  end
+
   def self.draw_rect(x, y, width, height, c, z = 0, mode = :default)
     _draw_rect(x, y, width, height, color_to_drawop(c), z, Gosu.mode_to_mask(mode))
   end
@@ -141,7 +149,7 @@ module Gosu
     case mode
     when :default
       0x0
-    when :additive
+    when :additive, :add
       0x0
     else
       raise ArgumentError, "No such mode: #{mode}"

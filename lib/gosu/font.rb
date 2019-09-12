@@ -6,6 +6,7 @@ module Gosu
     attach_function :_create_font, :Gosu_Font_create,   [:int, :string, :uint32], :pointer
     attach_function :_destroy_font, :Gosu_Font_destroy, [:pointer],               :void
 
+    attach_function :_font_name,   :Gosu_Font_name,   [:pointer], :string
     attach_function :_font_height, :Gosu_Font_height, [:pointer], :int
     attach_function :_font_flags,  :Gosu_Font_flags,  [:pointer], :uint32
 
@@ -32,6 +33,10 @@ module Gosu
       @__font
     end
 
+    def name
+      _font_name(@__font)
+    end
+
     def height
       _font_height(@__font)
     end
@@ -40,12 +45,12 @@ module Gosu
       _font_flags(@__font)
     end
 
-    def text_width(text)
-      _font_text_width(@__font, text.to_s)
+    def text_width(text, scale_x = 1)
+      _font_text_width(@__font, text.to_s) * scale_x
     end
 
-    def markup_width(text)
-      _font_markup_width(@__font, text.to_s)
+    def markup_width(text, scale_x = 1)
+      _font_markup_width(@__font, text.to_s) * scale_x
     end
 
     def draw(text, x, y, z, scale_x = 1, scale_y = 1, c = Gosu::Color::WHITE, mode = :default)
