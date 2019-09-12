@@ -3,7 +3,7 @@ module Gosu
     extend FFI::Library
     ffi_lib Gosu::LIBRARY_PATH
 
-    attach_function :_create_color,      :Gosu_Color_create,                [:uint],                        :uint
+    attach_function :_create_color,      :Gosu_Color_create,                [:uint],                          :uint
     attach_function :_create_color_argb, :Gosu_Color_create_argb,           [:uchar, :uchar, :uchar, :uchar], :uint
     attach_function :_create_color_from_ahsv, :Gosu_Color_create_from_ahsv, [:uchar, :uchar, :uchar, :uchar], :uint
     attach_function :_create_color_from_hsv, :Gosu_Color_create_from_hsv,   [:uchar, :uchar, :uchar],         :uint
