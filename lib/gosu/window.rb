@@ -29,20 +29,26 @@ module Gosu
 
     attach_function :_window_show,                :Gosu_Window_show,                [:pointer],                    :void
     attach_function :_window_close_immediately,   :Gosu_Window_close_immediately,   [:pointer],                    :void
+
     attach_function :_window_width,               :Gosu_Window_width,               [:pointer],                    :int
     attach_function :_window_set_width,           :Gosu_Window_set_width,           [:pointer, :int],              :void
     attach_function :_window_height,              :Gosu_Window_height,              [:pointer],                    :int
     attach_function :_window_set_height,          :Gosu_Window_set_height,          [:pointer, :int],              :void
+
     attach_function :_window_mouse_x,             :Gosu_Window_mouse_x,             [:pointer],                    :double
     attach_function :_window_set_mouse_x,         :Gosu_Window_set_mouse_x,         [:pointer, :double],           :void
     attach_function :_window_mouse_y,             :Gosu_Window_mouse_y,             [:pointer],                    :double
     attach_function :_window_set_mouse_y,         :Gosu_Window_set_mouse_y,         [:pointer, :double],           :void
+
     attach_function :_window_caption,             :Gosu_Window_caption,             [:pointer],                    :string
     attach_function :_window_set_caption,         :Gosu_Window_set_caption,         [:pointer, :string],           :void
     attach_function :_window_update_interval,     :Gosu_Window_update_interval,     [:pointer],                    :double
     attach_function :_window_set_update_interval, :Gosu_Window_set_update_interval, [:pointer, :double],           :void
     attach_function :_window_resize,              :Gosu_Window_resize,              [:pointer, :int, :int, :bool], :void
     attach_function :_window_fullscreen,          :Gosu_Window_fullscreen,          [:pointer],                    :bool
+
+    attach_function :_window_text_input,          :Gosu_Window_text_input,          [:pointer],                    :pointer
+    attach_function :_window_set_text_input,      :Gosu_Window_set_text_input,      [:pointer, :pointer],          :void
 
 
     def initialize(width, height, _fullscreen = nil, fullscreen: false, update_interval: 16.66666667, resizable: false)
@@ -107,11 +113,15 @@ module Gosu
     end
 
     def text_input
-      @__text_input
+      Gosu::TextInput.__from_pointer(_window_text_input(@__window))
     end
 
     def text_input=(text_input)
       raise ArgumentError, "text_input must be a Gosu::TextInput" unless text_input.is_a?(Gosu::TextInput) || text_input == nil
+      ptr = text_input ? text_input.__pointer : nil
+      @__text_input = ptr
+
+      _window_set_text_input(@__window, ptr)
     end
 
     def update_interval
