@@ -6,9 +6,10 @@ module Gosu
     attach_function :_create_image,      :Gosu_Image_create,     [:string, :uint32], :pointer
     attach_function :_destroy_image,     :Gosu_Image_destroy,    [:pointer],         :void
 
-    attach_function :_create_image_from_text, :Gosu_Image_create_from_text,     [:string, :string, :double, :int, :double, :uint32, :uint32, :uint32], :pointer
-    attach_function :_create_image_from_blob, :Gosu_Image_create_from_blob,     [:string, :int, :int, :uint32],                                        :pointer
-    attach_function :_image_subimage,         :Gosu_Image_create_from_subimage, [:pointer, :int, :int, :int, :int],                                    :pointer
+    attach_function :_create_image_from_markup, :Gosu_Image_create_from_markup,   [:string, :string, :double, :int, :double, :uint32, :uint32, :uint32], :pointer
+    attach_function :_create_image_from_text,   :Gosu_Image_create_from_text,     [:string, :string, :double, :int, :double, :uint32, :uint32, :uint32], :pointer
+    attach_function :_create_image_from_blob,   :Gosu_Image_create_from_blob,     [:string, :int, :int, :uint32],                                        :pointer
+    attach_function :_image_subimage,           :Gosu_Image_create_from_subimage, [:pointer, :int, :int, :int, :int],                                    :pointer
 
     attach_function :_image_width,       :Gosu_Image_width,      [:pointer], :int
     attach_function :_image_height,      :Gosu_Image_height,     [:pointer], :int
@@ -29,7 +30,11 @@ module Gosu
       Gosu::Image.new( _create_image_from_text(markup, font, line_height, width, spacing, align, font_flags, image_flags) )
     end
 
-    def self.from_markup
+    def self.from_markup(markup, line_height, font: Gosu.default_font_name, width: -1, spacing: 0, align: 0x0, font_flags: 0x0, image_flags: 0x0)
+      if align.is_a?(Symbol)
+        align = 0
+      end
+      Gosu::Image.new( _create_image_from_markup(markup, font, line_height, width, spacing, align, font_flags, image_flags) )
     end
 
     def self.load_tiles(filename, tile_width ,tile_height, options = {})
@@ -51,6 +56,8 @@ module Gosu
         pp object
         raise ArgumentError
       end
+
+      raise RuntimeError unless @__image
     end
 
     def __pointer
