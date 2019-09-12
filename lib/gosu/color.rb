@@ -3,35 +3,35 @@ module Gosu
     extend FFI::Library
     ffi_lib Gosu::LIBRARY_PATH
 
-    attach_function :_create_color,      :Gosu_Color_create,                [:uint32],                        :uint32
-    attach_function :_create_color_argb, :Gosu_Color_create_argb,           [:uchar, :uchar, :uchar, :uchar], :uint32
-    attach_function :_create_color_from_ahsv, :Gosu_Color_create_from_ahsv, [:uchar, :uchar, :uchar, :uchar], :uint32
-    attach_function :_create_color_from_hsv, :Gosu_Color_create_from_hsv,   [:uchar, :uchar, :uchar],         :uint32
+    attach_function :_create_color,      :Gosu_Color_create,                [:uint],                        :uint
+    attach_function :_create_color_argb, :Gosu_Color_create_argb,           [:uchar, :uchar, :uchar, :uchar], :uint
+    attach_function :_create_color_from_ahsv, :Gosu_Color_create_from_ahsv, [:uchar, :uchar, :uchar, :uchar], :uint
+    attach_function :_create_color_from_hsv, :Gosu_Color_create_from_hsv,   [:uchar, :uchar, :uchar],         :uint
 
 
-    attach_function :_color_alpha,       :Gosu_Color_alpha,      [:uint32], :uchar
-    attach_function :_color_red,         :Gosu_Color_red,        [:uint32], :uchar
-    attach_function :_color_green,       :Gosu_Color_green,      [:uint32], :uchar
-    attach_function :_color_blue,        :Gosu_Color_blue,       [:uint32], :uchar
+    attach_function :_color_alpha,       :Gosu_Color_alpha,      [:uint], :uchar
+    attach_function :_color_red,         :Gosu_Color_red,        [:uint], :uchar
+    attach_function :_color_green,       :Gosu_Color_green,      [:uint], :uchar
+    attach_function :_color_blue,        :Gosu_Color_blue,       [:uint], :uchar
 
-    attach_function :_color_set_alpha,   :Gosu_Color_set_alpha,  [:uint32, :uchar], :uint32
-    attach_function :_color_set_red,     :Gosu_Color_set_red,    [:uint32, :uchar], :uint32
-    attach_function :_color_set_green,   :Gosu_Color_set_green,  [:uint32, :uchar], :uint32
-    attach_function :_color_set_blue,    :Gosu_Color_set_blue,   [:uint32, :uchar], :uint32
-
-
-    attach_function :_color_value,      :Gosu_Color_value,      [:uint32], :uchar
-    attach_function :_color_saturation, :Gosu_Color_saturation, [:uint32], :uchar
-    attach_function :_color_hue,        :Gosu_Color_hue,        [:uint32], :uchar
-
-    attach_function :_color_set_value,      :Gosu_Color_set_value,      [:uint32, :uchar], :uint32
-    attach_function :_color_set_saturation, :Gosu_Color_set_saturation, [:uint32, :uchar], :uint32
-    attach_function :_color_set_hue,        :Gosu_Color_set_hue,        [:uint32, :uchar], :uint32
+    attach_function :_color_set_alpha,   :Gosu_Color_set_alpha,  [:uint, :uchar], :uint
+    attach_function :_color_set_red,     :Gosu_Color_set_red,    [:uint, :uchar], :uint
+    attach_function :_color_set_green,   :Gosu_Color_set_green,  [:uint, :uchar], :uint
+    attach_function :_color_set_blue,    :Gosu_Color_set_blue,   [:uint, :uchar], :uint
 
 
-    attach_function :_color_bgr,  :Gosu_Color_bgr,  [:uint32], :uint32
-    attach_function :_color_abgr, :Gosu_Color_abgr, [:uint32], :uint32
-    attach_function :_color_argb, :Gosu_Color_argb, [:uint32], :uint32
+    attach_function :_color_value,      :Gosu_Color_value,      [:uint], :uchar
+    attach_function :_color_saturation, :Gosu_Color_saturation, [:uint], :uchar
+    attach_function :_color_hue,        :Gosu_Color_hue,        [:uint], :uchar
+
+    attach_function :_color_set_value,      :Gosu_Color_set_value,      [:uint, :uchar], :uint
+    attach_function :_color_set_saturation, :Gosu_Color_set_saturation, [:uint, :uchar], :uint
+    attach_function :_color_set_hue,        :Gosu_Color_set_hue,        [:uint, :uchar], :uint
+
+
+    attach_function :_color_bgr,  :Gosu_Color_bgr,  [:uint], :uint
+    attach_function :_color_abgr, :Gosu_Color_abgr, [:uint], :uint
+    attach_function :_color_argb, :Gosu_Color_argb, [:uint], :uint
 
     def self.argb(*args)
       Gosu::Color.new(*args)
