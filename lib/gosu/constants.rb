@@ -4,7 +4,14 @@ module Gosu
   extend FFI::Library
   ffi_lib Gosu::LIBRARY_PATH
 
-  CONSTANTS = [
+  # Strings
+  constants = [
+    "VERSION",
+    "LICENSES",
+  ]
+
+  # uint32
+  buttons = [
     "KB_RANGE_BEGIN",
     "KB_ESCAPE",
     "KB_F1",
@@ -240,7 +247,7 @@ module Gosu
     "GP_NUM_PER_GAMEPAD",
   ]
 
-  CONSTANTS.each do |const|
+  buttons.each do |const|
     attach_variable :"#{const}", :"Gosu_#{const}", :uint32
     Gosu.const_set(const, Gosu.send(:"#{const}"))
 
@@ -248,4 +255,13 @@ module Gosu
     # puts "#{const}: #{Gosu.send(:"#{const}")}"
     # Gosu.undef_method(:"#{const}")
   end
+
+  constants.each do |const|
+    attach_variable :"#{const}", :"Gosu_#{const}", :string
+
+    Gosu.const_set(const, Gosu.send(:"#{const}"))
+  end
+
+  constants = nil
+  buttons = nil
 end

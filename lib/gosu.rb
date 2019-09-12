@@ -134,7 +134,7 @@ module Gosu
   end
 
   def self.color_to_drawop(color)
-    color.is_a?(Gosu::Color) ? color.abgr : color
+    color.is_a?(Gosu::Color) ? color.gl : color
   end
 
   def self.mode_to_mask(mode)
