@@ -10,6 +10,9 @@ require_relative "gosu/font"
 require_relative "gosu/color"
 require_relative "gosu/text_input"
 require_relative "gosu/gl_tex_info"
+require_relative "gosu/channel"
+require_relative "gosu/sample"
+require_relative "gosu/song"
 
 require_relative "gosu/compat"
 
@@ -34,7 +37,7 @@ module Gosu
   attach_function :_scale,     :Gosu_scale,     [:double, :double, :double, :double, :_callback_with_block], :void
   attach_function :_clip_to,   :Gosu_clip_to,   [:double, :double, :double, :double, :_callback_with_block], :void
 
-  attach_function :_gl_z,    :Gosu_gl_z,  [:_callback],                                 :void
+  attach_function :_gl_z,    :Gosu_gl_z,  [:double, :_callback],                        :void
   attach_function :_gl,      :Gosu_gl,    [:_callback],                                 :void
   attach_function :_render, :Gosu_render, [:int, :int, :_callback_with_block, :uint32], :pointer
   attach_function :_record, :Gosu_record, [:int, :int, :_callback_with_block],          :pointer
@@ -91,7 +94,7 @@ module Gosu
     _rotate(angle, around_x, around_y, block)
   end
 
-  def self.scale(x, y, around_x, around_y, &block)
+  def self.scale(x, y, around_x = 0, around_y = 0, &block)
     _scale(x, y, around_x, around_y, block)
   end
 
