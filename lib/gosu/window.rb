@@ -28,6 +28,7 @@ module Gosu
     attach_function :_window_gosu_button_down, :Gosu_Window_gosu_button_down, [:pointer, :uint32], :void
 
     attach_function :_window_show,                :Gosu_Window_show,                [:pointer],                    :void
+    attach_function :_window_tick,                :Gosu_Window_tick,                [:pointer],                    :bool
     attach_function :_window_close_immediately,   :Gosu_Window_close_immediately,   [:pointer],                    :void
 
     attach_function :_window_width,               :Gosu_Window_width,               [:pointer],                    :int
@@ -174,6 +175,10 @@ module Gosu
       if defined?(@__exception)
         raise @__exception
       end
+    end
+
+    def tick
+      _window_tick(@__window)
     end
 
     def close
