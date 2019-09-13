@@ -144,8 +144,22 @@ module Gosu
     _screen_height(window)
   end
 
+  def self.enable_undocumented_retrofication
+  end
+
   def self.color_to_drawop(color)
     color.is_a?(Gosu::Color) ? color.gl : color
+  end
+
+  def self.image_flags(mode)
+    case mode
+    when :default
+      0
+    when :retro
+      1
+    else
+      raise ArgumentError, "No such mode: #{mode}"
+    end
   end
 
   def self.mode_to_mask(mode)

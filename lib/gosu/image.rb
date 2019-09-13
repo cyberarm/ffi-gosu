@@ -23,18 +23,18 @@ module Gosu
     attach_function :_image_insert,      :Gosu_Image_insert,      [:pointer, :pointer, :int, :int], :pointer
     attach_function :_image_gl_tex_info, :Gosu_Image_gl_tex_info, [:pointer],                       :pointer
 
-    def self.from_text(markup, line_height, font: Gosu.default_font_name, width: -1, spacing: 0, align: 0x0, font_flags: 0x0, image_flags: 0x0)
+    def self.from_text(markup, line_height, font: Gosu.default_font_name, width: -1, spacing: 0, align: 0x0, font_flags: 0x0, image_flags: :default)
       if align.is_a?(Symbol)
         align = 0
       end
-      Gosu::Image.new( _create_image_from_text(markup, font, line_height, width, spacing, align, font_flags, image_flags) )
+      Gosu::Image.new( _create_image_from_text(markup, font, line_height, width, spacing, align, font_flags, Gosu.image_flags(image_flags)) )
     end
 
-    def self.from_markup(markup, line_height, font: Gosu.default_font_name, width: -1, spacing: 0, align: 0x0, font_flags: 0x0, image_flags: 0x0)
+    def self.from_markup(markup, line_height, font: Gosu.default_font_name, width: -1, spacing: 0, align: 0x0, font_flags: 0x0, image_flags: :default)
       if align.is_a?(Symbol)
         align = 0
       end
-      Gosu::Image.new( _create_image_from_markup(markup, font, line_height, width, spacing, align, font_flags, image_flags) )
+      Gosu::Image.new( _create_image_from_markup(markup, font, line_height, width, spacing, align, font_flags, Gosu.image_flags(image_flags)) )
     end
 
     def self.load_tiles(filename, tile_width ,tile_height, options = {})
@@ -72,12 +72,12 @@ module Gosu
       _image_height(@__image)
     end
 
-    def draw(x, y, z, scale_x = 1, scale_y = 1, color = Gosu::Color::WHITE, flags = 0x00000000)
-      _image_draw(@__image, x, y, z, scale_x, scale_y, Gosu.color_to_drawop(color), flags)
+    def draw(x, y, z, scale_x = 1, scale_y = 1, color = Gosu::Color::WHITE, flags = :default)
+      _image_draw(@__image, x, y, z, scale_x, scale_y, Gosu.color_to_drawop(color), Gosu.image_flags(flags))
     end
 
-    def draw_rot(x, y, z, angle, center_x = 0.5, center_y = 0.5, scale_x = 1, scale_y = 1, color = Gosu::Color::WHITE, flags = 0x00000000)
-      _image_draw_rot(@__image, x, y, z, angle, center_x, center_y, scale_x, scale_y, Gosu.color_to_drawop(color), flags)
+    def draw_rot(x, y, z, angle, center_x = 0.5, center_y = 0.5, scale_x = 1, scale_y = 1, color = Gosu::Color::WHITE, flags = :default)
+      _image_draw_rot(@__image, x, y, z, angle, center_x, center_y, scale_x, scale_y, Gosu.color_to_drawop(color), Gosu.image_flags(flags))
     end
 
     def save(filename)

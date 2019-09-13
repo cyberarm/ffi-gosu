@@ -51,8 +51,12 @@ module Gosu
     attach_function :_window_set_text_input,      :Gosu_Window_set_text_input,      [:pointer, :pointer],          :void
 
 
-    def initialize(width, height, _fullscreen = nil, fullscreen: false, update_interval: 16.66666667, resizable: false)
+    def initialize(width, height, _fullscreen = nil, _update_interval = nil, _resizable = nil,
+                   fullscreen: false, update_interval: 16.66666667, resizable: false)
       fullscreen = _fullscreen if _fullscreen
+      update_update_interval = _update_interval if _update_interval
+      resizable = _resizable if _resizable
+
       @__window = _create_window(width, height, fullscreen, update_interval, resizable)
       @__text_input = nil
 
