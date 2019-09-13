@@ -9,6 +9,7 @@ module Gosu
     attach_function :_channel_playing, :Gosu_Channel_playing, [:pointer], :bool
     attach_function :_channel_pause,   :Gosu_Channel_pause,   [:pointer], :void
     attach_function :_channel_paused,  :Gosu_Channel_paused,  [:pointer], :bool
+    attach_function :_channel_resume,  :Gosu_Channel_resume,  [:pointer], :void
     attach_function :_channel_stop,   :Gosu_Channel_stop,     [:pointer], :void
 
     attach_function :_channel_set_volume, :Gosu_Channel_set_volume, [:pointer, :double], :void
@@ -33,6 +34,10 @@ module Gosu
 
     def paused?
       _channel_paused(@__channel)
+    end
+
+    def resume
+      _channel_resume(@__channel)
     end
 
     def stop

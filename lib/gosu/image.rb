@@ -23,18 +23,16 @@ module Gosu
     attach_function :_image_insert,      :Gosu_Image_insert,      [:pointer, :pointer, :int, :int], :pointer
     attach_function :_image_gl_tex_info, :Gosu_Image_gl_tex_info, [:pointer],                       :pointer
 
-    def self.from_text(markup, line_height, font: Gosu.default_font_name, width: -1, spacing: 0, align: 0x0, font_flags: 0x0, image_flags: :default)
-      if align.is_a?(Symbol)
-        align = 0
-      end
-      Gosu::Image.new( _create_image_from_text(markup, font, line_height, width, spacing, align, font_flags, Gosu.image_flags(image_flags)) )
+    def self.from_text(markup, line_height, font: Gosu.default_font_name, width: -1, spacing: 0, align: :left,
+                       bold: false, italic: false, underline: false, retro: false)
+      Gosu::Image.new( _create_image_from_text(markup, font, line_height, width, spacing,
+                      Gosu.font_alignment_flags(align), Gosu.font_flags(bold, italic, underline), Gosu.image_flags(retro)) )
     end
 
-    def self.from_markup(markup, line_height, font: Gosu.default_font_name, width: -1, spacing: 0, align: 0x0, font_flags: 0x0, image_flags: :default)
-      if align.is_a?(Symbol)
-        align = 0
-      end
-      Gosu::Image.new( _create_image_from_markup(markup, font, line_height, width, spacing, align, font_flags, Gosu.image_flags(image_flags)) )
+    def self.from_markup(markup, line_height, font: Gosu.default_font_name, width: -1, spacing: 0, align: :left,
+                       bold: false, italic: false, underline: false, retro: false)
+      Gosu::Image.new( _create_image_from_markup(markup, font, line_height, width, spacing,
+                      Gosu.font_alignment_flags(align), Gosu.font_flags(bold, italic, underline), Gosu.image_flags(retro)) )
     end
 
     def self.load_tiles(filename, tile_width ,tile_height, options = {})

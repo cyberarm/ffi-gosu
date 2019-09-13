@@ -42,9 +42,9 @@ module Gosu
   attach_function :_render, :Gosu_render, [:int, :int, :_callback_with_block, :uint32], :pointer
   attach_function :_record, :Gosu_record, [:int, :int, :_callback_with_block],          :pointer
 
-  attach_function :_button_down, :Gosu_button_down, [:uint32], :bool
+  attach_function :_button_down, :Gosu_button_down,            [:uint32], :bool
   attach_function :button_id_to_char, :Gosu_button_id_to_char, [:uint32], :string
-  attach_function :button_char_to_id, :Gosu_button_char_to_id, [:string], :uint32
+  attach_function :char_to_button_id, :Gosu_button_char_to_id, [:string], :uint32
 
   attach_function :_draw_line, :Gosu_draw_line,         [:double, :double, :uint32, :double, :double, :uint32, :double, :uint32], :void
   attach_function :_draw_quad, :Gosu_draw_quad,         [:double, :double, :uint32, :double, :double, :uint32,
@@ -53,7 +53,7 @@ module Gosu
                                                          :double, :double, :uint32, :double, :uint32],                            :void
   attach_function :_draw_rect, :Gosu_draw_rect,         [:double, :double, :double, :double, :uint32, :double, :uint32],          :void
 
-  attach_function :offset_x,   :Gosu_offset_y,   [:double, :double],                   :double
+  attach_function :offset_x,   :Gosu_offset_x,   [:double, :double],                   :double
   attach_function :offset_y,   :Gosu_offset_y,   [:double, :double],                   :double
   attach_function :distance,   :Gosu_distance,   [:double, :double, :double, :double], :double
   attach_function :angle,      :Gosu_angle,      [:double, :double, :double, :double], :double
@@ -151,13 +151,42 @@ module Gosu
     color.is_a?(Gosu::Color) ? color.gl : color
   end
 
+  # SEE: https://github.com/gosu/gosu/blob/master/Gosu/GraphicsBase.hpp
   def self.image_flags(mode)
+    mode = mode ? :retro : :default if mode.is_a?(TrueClass) || mode.is_a?(FalseClass)
+
     case mode
-    when :default
+    when :default, :smooth
       0
     when :retro
-      1
+      1 << 5
     else
+      return mode if mode.is_a?(Numeric)
+      raise ArgumentError, "No such mode: #{mode}"
+    end
+  end
+
+  def self.font_flags(bold, italic, underline)
+    flags = 0x0
+    flags |= 1 if bold
+    flags |= 2 if italic
+    flags |= 4 if underline
+
+    return flags
+  end
+
+  def self.font_alignment_flags(mode)
+    case mode
+    when :left
+      0
+    when :right
+      1
+    when :center
+      2
+    when :justify
+      3
+    else
+      return mode if mode.is_a?(Numeric)
       raise ArgumentError, "No such mode: #{mode}"
     end
   end
@@ -165,10 +194,13 @@ module Gosu
   def self.mode_to_mask(mode)
     case mode
     when :default
-      0x0
+      0
     when :additive, :add
-      0x0
+      1
+    when :multiply
+      2
     else
+      return mode if mode.is_a?(Numeric)
       raise ArgumentError, "No such mode: #{mode}"
     end
   end

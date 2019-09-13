@@ -54,7 +54,7 @@ module Gosu
     def initialize(width, height, _fullscreen = nil, _update_interval = nil, _resizable = nil,
                    fullscreen: false, update_interval: 16.66666667, resizable: false)
       fullscreen = _fullscreen if _fullscreen
-      update_update_interval = _update_interval if _update_interval
+      update_interval = _update_interval if _update_interval
       resizable = _resizable if _resizable
 
       @__window = _create_window(width, height, fullscreen, update_interval, resizable)

@@ -26,7 +26,7 @@ module Gosu
     attach_function :_font_set_image, :Gosu_Font_set_image, [:pointer, :string, :uint32, :pointer], :void
 
     def initialize(height, name: Gosu.default_font_name, bold: false, italic: false, underline: false)
-      @__font = _create_font(height, name, 0x0)
+      @__font = _create_font(height, name, Gosu.font_flags(bold, italic, underline))
     end
 
     def __pointer
@@ -46,7 +46,8 @@ module Gosu
     end
 
     def text_width(text, scale_x = 1)
-      _font_text_width(@__font, text.to_s) * scale_x
+      # _font_text_width(@__font, text.to_s) * scale_x
+      _font_markup_width(@__font, text.to_s) * scale_x
     end
 
     def markup_width(text, scale_x = 1)
@@ -69,6 +70,10 @@ module Gosu
       _font_draw_markup(@__font, text.to_s, x, y, z, scale_x, scale_y, Gosu.color_to_drawop(c), Gosu.mode_to_mask(mode))
     end
 
+    def draw_rel(*args)
+      _font_draw_markup_rel(*args)
+    end
+
     def draw_text_rel(text, x, y, z, rel_x, rel_y, scale_x = 1, scale_y = 1, c = Gosu::Color::WHITE, mode = :default)
       _font_draw_text_rel(@__font, text.to_s, x, y, z, rel_x, rel_y, scale_x, scale_y, Gosu.color_to_drawop(c), Gosu.mode_to_mask(mode))
     end
@@ -77,8 +82,8 @@ module Gosu
       _font_draw_markup_rel(@__font, text.to_s, x, y, z, rel_x, rel_y, scale_x, scale_y, Gosu.color_to_drawop(c), Gosu.mode_to_mask(mode))
     end
 
-    def set_image(codepoint, flags, image)
-      _font_set_image(@__font, codepoint, flags, image.__pointer)
+    def []=(codepoint, image, flags = :default)
+      _font_set_image(@__font, codepoint, Gosu.image_flags(flags), image.__pointer)
     end
 
     def free_object

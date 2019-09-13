@@ -70,6 +70,10 @@ module Gosu
     end
   end
 
+  def eql?(other)
+    __pointer.address == other&.__pointer&.address
+  end
+
   def free_object
     _destroy_song(@__song)
   end
