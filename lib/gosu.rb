@@ -66,6 +66,11 @@ module Gosu
   attach_function :_available_height, :Gosu_available_height, [:pointer], :uint32
 
   def self.gl(z = nil, &block)
+    # Gosu.gl might not be called immediately
+    # so to prevent block getting GC'd until used
+    # store them in a global variable which is
+    # cleared after rendering is complete
+    # i.e. after Window.draw is done.
     $gosu_gl_blocks ||= []
     $gosu_gl_blocks << block
 
@@ -98,7 +103,8 @@ module Gosu
     _scale(x, y, around_x, around_y, block)
   end
 
-  # Note: JRuby stops rendering after a second or two... block out of scope? (GC'd resulting in a nullptr in C land?)
+  # Note: On JRuby this seems to get "optimized out" for some reason
+  # For now, call jruby with the `--dev` option
   def self.clip_to(x, y, width, height, &block)
     _clip_to(x, y, width, height, block)
   end
