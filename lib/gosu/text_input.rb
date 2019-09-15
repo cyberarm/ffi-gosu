@@ -3,7 +3,7 @@ module Gosu
     extend FFI::Library
     ffi_lib Gosu::LIBRARY_PATH
 
-    callback :_callback_filter, [:string, :pointer], :void
+    callback :_callback_filter, [:pointer, :string], :void
 
     attach_function :_create_textinput,   :Gosu_TextInput_create,   [],         :pointer
     attach_function :_destroy_textinput,  :Gosu_TextInput_destroy,  [:pointer], :void
@@ -31,7 +31,7 @@ module Gosu
       @__text_input = _create_textinput
       @@text_inputs[@__text_input.address] = self
 
-      @__filter_proc = proc { |text, data| protected_filter(text) }
+      @__filter_proc = proc { |data, text| protected_filter(text) }
       _textinput_set_filter(@__text_input, @__filter_proc, nil)
     end
 
