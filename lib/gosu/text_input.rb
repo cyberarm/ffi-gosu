@@ -3,7 +3,7 @@ module Gosu
     extend FFI::Library
     ffi_lib Gosu::LIBRARY_PATH
 
-    callback :_callback_filter, [:string], :string
+    callback :_callback_filter, [:string], :char # jruby no like :string
 
     attach_function :_create_textinput,   :Gosu_TextInput_create,   [],         :pointer
     attach_function :_destroy_textinput,  :Gosu_TextInput_destroy,  [:pointer], :void

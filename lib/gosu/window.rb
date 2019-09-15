@@ -3,26 +3,26 @@ module Gosu
     extend FFI::Library
     ffi_lib Gosu::LIBRARY_PATH
 
-    callback :_callback_window_draw,         [],        :void
-    callback :_callback_window_update,       [],        :void
-    callback :_callback_window_button_down,  [:uint32], :void
-    callback :_callback_window_button_up,    [:uint32], :void
-    callback :_callback_window_drop,         [:string], :void
-    callback :_callback_window_needs_redraw, [],        :bool
-    callback :_callback_window_needs_cursor, [],        :bool
-    callback :_callback_window_close,        [],        :bool
+    callback :_callback_window_draw,         [:pointer],          :void
+    callback :_callback_window_update,       [:pointer],          :void
+    callback :_callback_window_button_down,  [:pointer, :uint32], :void
+    callback :_callback_window_button_up,    [:pointer, :uint32], :void
+    callback :_callback_window_drop,         [:pointer, :string], :void
+    callback :_callback_window_needs_redraw, [:pointer],          :bool
+    callback :_callback_window_needs_cursor, [:pointer],          :bool
+    callback :_callback_window_close,        [:pointer],          :bool
 
     attach_function :_create_window,  :Gosu_Window_create,  [:int, :int, :bool, :double, :bool], :pointer
     attach_function :_destroy_window, :Gosu_Window_destroy, [:pointer],                          :void
 
-    attach_function :_window_set_draw,         :Gosu_Window_set_draw,         [:pointer, :_callback_window_draw],         :void
-    attach_function :_window_set_update,       :Gosu_Window_set_update,       [:pointer, :_callback_window_update],       :void
-    attach_function :_window_set_button_down,  :Gosu_Window_set_button_down,  [:pointer, :_callback_window_button_down],  :void
-    attach_function :_window_set_button_up,    :Gosu_Window_set_button_up,    [:pointer, :_callback_window_button_up],    :void
-    attach_function :_window_set_drop,         :Gosu_Window_set_drop,         [:pointer, :_callback_window_drop],         :void
-    attach_function :_window_set_needs_redraw, :Gosu_Window_set_needs_redraw, [:pointer, :_callback_window_needs_redraw], :void
-    attach_function :_window_set_needs_cursor, :Gosu_Window_set_needs_cursor, [:pointer, :_callback_window_needs_cursor], :void
-    attach_function :_window_set_close,        :Gosu_Window_set_close,        [:pointer, :_callback_window_close],        :void
+    attach_function :_window_set_draw,         :Gosu_Window_set_draw,         [:pointer, :_callback_window_draw, :pointer],         :void
+    attach_function :_window_set_update,       :Gosu_Window_set_update,       [:pointer, :_callback_window_update, :pointer],       :void
+    attach_function :_window_set_button_down,  :Gosu_Window_set_button_down,  [:pointer, :_callback_window_button_down, :pointer],  :void
+    attach_function :_window_set_button_up,    :Gosu_Window_set_button_up,    [:pointer, :_callback_window_button_up, :pointer],    :void
+    attach_function :_window_set_drop,         :Gosu_Window_set_drop,         [:pointer, :_callback_window_drop, :pointer],         :void
+    attach_function :_window_set_needs_redraw, :Gosu_Window_set_needs_redraw, [:pointer, :_callback_window_needs_redraw, :pointer], :void
+    attach_function :_window_set_needs_cursor, :Gosu_Window_set_needs_cursor, [:pointer, :_callback_window_needs_cursor, :pointer], :void
+    attach_function :_window_set_close,        :Gosu_Window_set_close,        [:pointer, :_callback_window_close, :pointer],        :void
 
     # Enable gosu's default button_down fullscreen toggle
     attach_function :_window_gosu_button_down, :Gosu_Window_gosu_button_down, [:pointer, :uint32], :void
@@ -61,23 +61,23 @@ module Gosu
       @__window = _create_window(width, height, fullscreen, update_interval, resizable)
       @__text_input = nil
 
-      @__update_proc       = proc { protected_update }
-      @__draw_proc         = proc { protected_draw }
-      @__button_down_proc  = proc { |id| protected_button_down(id) }
-      @__button_up_proc    = proc { |id| protected_button_up(id) }
-      @__drop_proc         = proc { |filename| drop(filename) }
-      @__needs_redraw_proc = proc { protected_needs_redraw? }
-      @__needs_cursor_proc = proc { protected_needs_cursor? }
-      @__close_proc        = proc { close }
+      @__update_proc       = proc { |data| protected_update }
+      @__draw_proc         = proc { |data| protected_draw }
+      @__button_down_proc  = proc { |data, id| protected_button_down(id) }
+      @__button_up_proc    = proc { |data, id| protected_button_up(id) }
+      @__drop_proc         = proc { |data, filename| drop(filename) }
+      @__needs_redraw_proc = proc { |data| protected_needs_redraw? }
+      @__needs_cursor_proc = proc { |data| protected_needs_cursor? }
+      @__close_proc        = proc { |data| close }
 
-      _window_set_update(@__window, @__update_proc)
-      _window_set_draw(@__window, @__draw_proc)
-      _window_set_button_down(@__window, @__button_down_proc)
-      _window_set_button_up(@__window, @__button_up_proc)
-      _window_set_drop(@__window, @__drop_proc)
-      _window_set_needs_redraw(@__window, @__needs_redraw_proc)
-      _window_set_needs_cursor(@__window, @__needs_cursor_proc)
-      _window_set_close(@__window, @__close_proc)
+      _window_set_update(@__window, @__update_proc, nil)
+      _window_set_draw(@__window, @__draw_proc, nil)
+      _window_set_button_down(@__window, @__button_down_proc, nil)
+      _window_set_button_up(@__window, @__button_up_proc, nil)
+      _window_set_drop(@__window, @__drop_proc, nil)
+      _window_set_needs_redraw(@__window, @__needs_redraw_proc, nil)
+      _window_set_needs_cursor(@__window, @__needs_cursor_proc, nil)
+      _window_set_close(@__window, @__close_proc, nil)
     end
 
     # Returns FFI pointer of C side Gosu::Window
