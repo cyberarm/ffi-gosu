@@ -3,7 +3,7 @@ module Gosu
     extend FFI::Library
     ffi_lib Gosu::LIBRARY_PATH
 
-    callback :_callback_filter, [:string], :char # jruby no like :string
+    callback :_callback_filter, [:string, :pointer], :void
 
     attach_function :_create_textinput,   :Gosu_TextInput_create,   [],         :pointer
     attach_function :_destroy_textinput,  :Gosu_TextInput_destroy,  [:pointer], :void
@@ -13,9 +13,10 @@ module Gosu
     attach_function :_textinput_selection_start,      :Gosu_TextInput_selection_start,     [:pointer],          :uint32
     attach_function :_textinput_set_selection_start,  :Gosu_TextInput_set_selection_start, [:pointer, :uint32], :void
 
-    attach_function :_textinput_text,       :Gosu_TextInput_text,       [:pointer], :string
-    attach_function :_textinput_set_text,   :Gosu_TextInput_set_text,   [:pointer, :string], :void
-    attach_function :_textinput_set_filter, :Gosu_TextInput_set_filter, [:pointer, :_callback_filter], :void
+    attach_function :_textinput_text,              :Gosu_TextInput_text,              [:pointer],                              :string
+    attach_function :_textinput_set_text,          :Gosu_TextInput_set_text,          [:pointer, :string],                     :void
+    attach_function :_textinput_set_filter,        :Gosu_TextInput_set_filter,        [:pointer, :_callback_filter, :pointer], :void
+    attach_function :_textinput_set_filter_result, :Gosu_TextInput_set_filter_result, [:pointer, :string],                     :void
 
     attach_function :_textinput_delete_backward, :Gosu_TextInput_delete_backward, [:pointer], :void
     attach_function :_textinput_delete_forward,  :Gosu_TextInput_delete_forward,  [:pointer], :void
@@ -30,8 +31,8 @@ module Gosu
       @__text_input = _create_textinput
       @@text_inputs[@__text_input.address] = self
 
-      @__filter_proc = proc { |text| filter(text) }
-      _textinput_set_filter(@__text_input, @__filter_proc)
+      @__filter_proc = proc { |text, data| protected_filter(text) }
+      _textinput_set_filter(@__text_input, @__filter_proc, nil)
     end
 
     def __pointer
@@ -72,6 +73,12 @@ module Gosu
 
     def delete_forward
       _textinput_delete_forward(@__text_input)
+    end
+
+    # Ensures that filter_result is set on C side before filter callback returns
+    private def protected_filter(text)
+      string = filter(text)
+      _textinput_set_filter_result(@__text_input, string)
     end
 
     def free_object
