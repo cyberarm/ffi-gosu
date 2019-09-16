@@ -10,6 +10,7 @@ module Gosu
     attach_function :_create_image_from_text,   :Gosu_Image_create_from_text,     [:string, :string, :double, :int, :double, :uint32, :uint32, :uint32], :pointer
     attach_function :_create_image_from_blob,   :Gosu_Image_create_from_blob,     [:pointer, :int, :int, :int, :uint32],                                 :pointer
     attach_function :_image_subimage,           :Gosu_Image_create_from_subimage, [:pointer, :int, :int, :int, :int],                                    :pointer
+    attach_function :_image_load_tiles,         :Gosu_Image_create_from_tiles,    [:pointer, :int, :int, :uint32],                                       :pointer
 
     attach_function :_image_width,       :Gosu_Image_width,      [:pointer], :int
     attach_function :_image_height,      :Gosu_Image_height,     [:pointer], :int
@@ -25,22 +26,24 @@ module Gosu
 
     def self.from_text(markup, line_height, font: Gosu.default_font_name, width: -1, spacing: 0, align: :left,
                        bold: false, italic: false, underline: false, retro: false)
-      Gosu::Image.new( _create_image_from_text(markup, font, line_height, width, spacing,
-                      Gosu.font_alignment_flags(align), Gosu.font_flags(bold, italic, underline), Gosu.image_flags(retro)) )
+      Gosu::Image.new( _create_image_from_markup(markup, font, line_height, width, spacing,
+                      Gosu.font_alignment_flags(align), Gosu.font_flags(bold, italic, underline), Gosu.image_flags(retro: retro)) )
     end
 
     def self.from_markup(markup, line_height, font: Gosu.default_font_name, width: -1, spacing: 0, align: :left,
                        bold: false, italic: false, underline: false, retro: false)
       Gosu::Image.new( _create_image_from_markup(markup, font, line_height, width, spacing,
-                      Gosu.font_alignment_flags(align), Gosu.font_flags(bold, italic, underline), Gosu.image_flags(retro)) )
+                      Gosu.font_alignment_flags(align), Gosu.font_flags(bold, italic, underline), Gosu.image_flags(retro: retro)) )
     end
 
-    def self.load_tiles(filename, tile_width ,tile_height, options = {})
+    def self.load_tiles(filename, tile_width ,tile_height, retro: false, tileable: false)
+      source = Gosu::Image.new(filename, retro: retro, tileable: tileable)
+      _image_load_tiles(source.__pointer, tile_width, tile_width, Gosu.image_flags(retro: retro, tileable: tileable))
     end
 
-    def initialize(object, retro: false)
+    def initialize(object, retro: false, tileable: false)
       if object.is_a?(String)
-        @__image = _create_image(object, Gosu.image_flags(retro))
+        @__image = _create_image(object, Gosu.image_flags(retro: retro, tileable: tileable))
 
       elsif object.is_a?(FFI::Pointer)
         @__image = object
@@ -76,11 +79,11 @@ module Gosu
     end
 
     def draw(x, y, z, scale_x = 1, scale_y = 1, color = Gosu::Color::WHITE, flags = :default)
-      _image_draw(@__image, x, y, z, scale_x, scale_y, Gosu.color_to_drawop(color), Gosu.image_flags(flags))
+      _image_draw(@__image, x, y, z, scale_x, scale_y, Gosu.color_to_drawop(color), Gosu.mode_to_mask(flags))
     end
 
     def draw_rot(x, y, z, angle, center_x = 0.5, center_y = 0.5, scale_x = 1, scale_y = 1, color = Gosu::Color::WHITE, flags = :default)
-      _image_draw_rot(@__image, x, y, z, angle, center_x, center_y, scale_x, scale_y, Gosu.color_to_drawop(color), Gosu.image_flags(flags))
+      _image_draw_rot(@__image, x, y, z, angle, center_x, center_y, scale_x, scale_y, Gosu.color_to_drawop(color), Gosu.mode_to_mask(flags))
     end
 
     def save(filename)

@@ -54,8 +54,9 @@ module Gosu
       _font_markup_width(@__font, text.to_s) * scale_x
     end
 
-    def draw(text, x, y, z, scale_x = 1, scale_y = 1, c = Gosu::Color::WHITE, mode = :default)
-      raise "Using Gosu::Font.draw is deprecated, use Gosu::Font.draw_text or Gosu::Font.draw_markup"
+    # Using Gosu::Font.draw is deprecated, use {Gosu::Font.draw_text} or {Gosu::Font.draw_markup}
+    def draw(*args)
+      draw_markup(*args)
     end
 
     def draw_rot(text, x, y, z, angle, scale_x = 1, scale_y = 1, c = Gosu::Color::WHITE, mode = :default)

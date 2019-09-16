@@ -158,18 +158,13 @@ module Gosu
   end
 
   # SEE: https://github.com/gosu/gosu/blob/master/Gosu/GraphicsBase.hpp
-  def self.image_flags(mode)
-    mode = mode ? :retro : :default if mode.is_a?(TrueClass) || mode.is_a?(FalseClass)
+  def self.image_flags(retro: false, tileable: false)
+    flags = 0x0
 
-    case mode
-    when :default, :smooth
-      0
-    when :retro
-      1 << 5
-    else
-      return mode if mode.is_a?(Numeric)
-      raise ArgumentError, "No such mode: #{mode}"
-    end
+    flags |= 1 << 5 if retro
+    flags |= 1 << 8 if tileable
+
+    return flags
   end
 
   def self.font_flags(bold, italic, underline)
