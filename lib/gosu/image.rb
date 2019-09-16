@@ -8,7 +8,7 @@ module Gosu
 
     attach_function :_create_image_from_markup, :Gosu_Image_create_from_markup,   [:string, :string, :double, :int, :double, :uint32, :uint32, :uint32], :pointer
     attach_function :_create_image_from_text,   :Gosu_Image_create_from_text,     [:string, :string, :double, :int, :double, :uint32, :uint32, :uint32], :pointer
-    attach_function :_create_image_from_blob,   :Gosu_Image_create_from_blob,     [:string, :int, :int, :uint32],                                        :pointer
+    attach_function :_create_image_from_blob,   :Gosu_Image_create_from_blob,     [:pointer, :int, :int, :int, :uint32],                                 :pointer
     attach_function :_image_subimage,           :Gosu_Image_create_from_subimage, [:pointer, :int, :int, :int, :int],                                    :pointer
 
     attach_function :_image_width,       :Gosu_Image_width,      [:pointer], :int
@@ -19,7 +19,7 @@ module Gosu
                                                                   :double, :double, :uint32, :uint32],                                      :void
 
     attach_function :_image_save,        :Gosu_Image_save,        [:pointer, :string],              :void
-    attach_function :_image_to_blob,     :Gosu_Image_to_blob,     [:pointer],                       :string
+    attach_function :_image_to_blob,     :Gosu_Image_to_blob,     [:pointer],                       :pointer
     attach_function :_image_insert,      :Gosu_Image_insert,      [:pointer, :pointer, :int, :int], :pointer
     attach_function :_image_gl_tex_info, :Gosu_Image_gl_tex_info, [:pointer],                       :pointer
 
@@ -39,17 +39,22 @@ module Gosu
     end
 
     def initialize(object, retro: false)
-      image_flags = 0x00000000
-
       if object.is_a?(String)
-        @__image = _create_image(object, image_flags)
+        @__image = _create_image(object, Gosu.image_flags(retro))
 
       elsif object.is_a?(FFI::Pointer)
         @__image = object
       elsif object.respond_to?(:to_blob) &&
             object.respond_to?(:columns)
             object.respond_to?(:rows)
-        @__image = _create_image_from_blob(object.to_blob, object.columns, object.rows, image_flags)
+
+        blob_bytes = object.to_blob.bytes
+        FFI::MemoryPointer.new(:uchar, blob_bytes.size) do |blob|
+          blob.write_array_of_type(:uchar, :put_uchar, blob_bytes)
+          @__image = _create_image_from_blob(blob, blob_bytes.size, object.columns, object.rows, Gosu.image_flags(retro))
+        end
+
+        raise "Failed to load image from blob" if @__image.null?
       else
         pp object
         raise ArgumentError
@@ -83,7 +88,7 @@ module Gosu
     end
 
     def to_blob
-      _image_to_blob(@__image)
+      _image_to_blob(@__image).read_string(width * height * Gosu::Color::SIZEOF)
     end
 
     def subimage(left, top, width, height)

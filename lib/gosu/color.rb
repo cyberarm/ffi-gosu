@@ -33,6 +33,10 @@ module Gosu
     attach_function :_color_abgr, :Gosu_Color_abgr, [:uint32], :uint32
     attach_function :_color_argb, :Gosu_Color_argb, [:uint32], :uint32
 
+    # Gosu::Color is stored as an unsigned int in C
+    # this is used for {Gosu::Image#to_blob} and {Gosu::Image.from_blob}
+    SIZEOF = 4
+
     def self.argb(*args)
       Gosu::Color.new(*args)
     end
