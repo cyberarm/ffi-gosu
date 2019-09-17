@@ -1,4 +1,5 @@
 require "ffi"
+require "fiddle"
 
 require_relative "gosu/numeric"
 
@@ -114,7 +115,7 @@ module Gosu
   end
 
   def self.draw_line(x1, y1, c1, x2, y2, c2, z = 0, mode = :default)
-    _draw_line(x1, y1, color_to_drawop(c1), x2, y2, color_to_drawop(c2), z, Gosu.mode_to_mask(mode))
+    _draw_line(x1, y1, color_to_drawop(c1), x2, y2, color_to_drawop(c2), z, Gosu.blendmode(mode))
   end
 
   def self.draw_quad(x1, y1, c1, x2, y2, c2,
@@ -122,16 +123,16 @@ module Gosu
                      z = 0, mode = :default)
     _draw_quad(x1, y1, color_to_drawop(c1), x2, y2, color_to_drawop(c2),
                x3, y3, color_to_drawop(c3), x4, y4, color_to_drawop(c4),
-               z, Gosu.mode_to_mask(mode))
+               z, Gosu.blendmode(mode))
   end
 
   def self.draw_triangle(x1, y1, c1, x2, y2, c2, x3, y3, c3, z = 0, mode = :default)
     _draw_triangle(x1, y1, color_to_drawop(c1), x2, y2, color_to_drawop(c2),
-               x3, y3, color_to_drawop(c3), z, Gosu.mode_to_mask(mode))
+               x3, y3, color_to_drawop(c3), z, Gosu.blendmode(mode))
   end
 
   def self.draw_rect(x, y, width, height, c, z = 0, mode = :default)
-    _draw_rect(x, y, width, height, color_to_drawop(c), z, Gosu.mode_to_mask(mode))
+    _draw_rect(x, y, width, height, color_to_drawop(c), z, Gosu.blendmode(mode))
   end
 
   def self.available_width(window = nil)
@@ -192,7 +193,7 @@ module Gosu
     end
   end
 
-  def self.mode_to_mask(mode)
+  def self.blendmode(mode)
     case mode
     when :default
       0

@@ -47,6 +47,7 @@ module Gosu
     attach_function :_window_set_update_interval, :Gosu_Window_set_update_interval, [:pointer, :double],           :void
     attach_function :_window_resize,              :Gosu_Window_resize,              [:pointer, :int, :int, :bool], :void
     attach_function :_window_fullscreen,          :Gosu_Window_fullscreen,          [:pointer],                    :bool
+    attach_function :_window_resizable,           :Gosu_Window_resizable,           [:pointer],                    :bool
 
     attach_function :_window_text_input,          :Gosu_Window_text_input,          [:pointer],                    :pointer
     attach_function :_window_set_text_input,      :Gosu_Window_set_text_input,      [:pointer, :pointer],          :void
@@ -117,6 +118,10 @@ module Gosu
       _window_resize(@__window, self.width, self.height, boolean)
     end
 
+    def resizable?
+      _window_resizable(@__window)
+    end
+
     def text_input
       Gosu::TextInput.__from_pointer(_window_text_input(@__window))
     end
@@ -167,6 +172,11 @@ module Gosu
 
     def mouse_y=(double)
       _window_set_mouse_y(@__window, double)
+    end
+
+    def set_mouse_position(x, y)
+      self.mouse_x = x
+      self.mouse_y = y
     end
 
     def show
