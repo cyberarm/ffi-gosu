@@ -26,32 +26,33 @@ module Gosu
     attach_function :_font_set_image, :Gosu_Font_set_image, [:pointer, :string, :uint32, :pointer], :void
 
     def initialize(height, name: Gosu.default_font_name, bold: false, italic: false, underline: false)
-      @__font = _create_font(height, name, Gosu.font_flags(bold, italic, underline))
+      __font = _create_font(height, name, Gosu.font_flags(bold, italic, underline))
+      @memory_pointer = FFI::AutoPointer.new(__font, Gosu::Font.method(:release))
     end
 
     def __pointer
-      @__font
+      @memory_pointer
     end
 
     def name
-      _font_name(@__font)
+      _font_name(__pointer)
     end
 
     def height
-      _font_height(@__font)
+      _font_height(__pointer)
     end
 
     def flags
-      _font_flags(@__font)
+      _font_flags(__pointer)
     end
 
     def text_width(text, scale_x = 1)
-      # _font_text_width(@__font, text.to_s) * scale_x
-      _font_markup_width(@__font, text.to_s) * scale_x
+      # _font_text_width(__pointer, text.to_s) * scale_x
+      _font_markup_width(__pointer, text.to_s) * scale_x
     end
 
     def markup_width(text, scale_x = 1)
-      _font_markup_width(@__font, text.to_s) * scale_x
+      _font_markup_width(__pointer, text.to_s) * scale_x
     end
 
     # Using Gosu::Font.draw is deprecated, use {Gosu::Font.draw_text} or {Gosu::Font.draw_markup}
@@ -64,11 +65,11 @@ module Gosu
     end
 
     def draw_text(text, x, y, z, scale_x = 1, scale_y = 1, c = Gosu::Color::WHITE, mode = :default)
-      _font_draw_text(@__font, text.to_s, x, y, z, scale_x, scale_y, Gosu.color_to_drawop(c), Gosu.blendmode(mode))
+      _font_draw_text(__pointer, text.to_s, x, y, z, scale_x, scale_y, Gosu.color_to_drawop(c), Gosu.blendmode(mode))
     end
 
     def draw_markup(text, x, y, z, scale_x = 1, scale_y = 1, c = Gosu::Color::WHITE, mode = :default)
-      _font_draw_markup(@__font, text.to_s, x, y, z, scale_x, scale_y, Gosu.color_to_drawop(c), Gosu.blendmode(mode))
+      _font_draw_markup(__pointer, text.to_s, x, y, z, scale_x, scale_y, Gosu.color_to_drawop(c), Gosu.blendmode(mode))
     end
 
     def draw_rel(*args)
@@ -76,19 +77,19 @@ module Gosu
     end
 
     def draw_text_rel(text, x, y, z, rel_x, rel_y, scale_x = 1, scale_y = 1, c = Gosu::Color::WHITE, mode = :default)
-      _font_draw_text_rel(@__font, text.to_s, x, y, z, rel_x, rel_y, scale_x, scale_y, Gosu.color_to_drawop(c), Gosu.blendmode(mode))
+      _font_draw_text_rel(__pointer, text.to_s, x, y, z, rel_x, rel_y, scale_x, scale_y, Gosu.color_to_drawop(c), Gosu.blendmode(mode))
     end
 
     def draw_markup_rel(text, x, y, z, rel_x, rel_y, scale_x = 1, scale_y = 1, c = Gosu::Color::WHITE, mode = :default)
-      _font_draw_markup_rel(@__font, text.to_s, x, y, z, rel_x, rel_y, scale_x, scale_y, Gosu.color_to_drawop(c), Gosu.blendmode(mode))
+      _font_draw_markup_rel(__pointer, text.to_s, x, y, z, rel_x, rel_y, scale_x, scale_y, Gosu.color_to_drawop(c), Gosu.blendmode(mode))
     end
 
     def []=(codepoint, image)
-      _font_set_image(@__font, codepoint, self.flags, image.__pointer)
+      _font_set_image(__pointer, codepoint, self.flags, image.__pointer)
     end
 
-    def free_object
-      _destroy_font(@__font)
+    def self.release(pointer)
+      _destroy_font(pointer)
     end
   end
 end

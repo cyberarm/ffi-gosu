@@ -59,8 +59,9 @@ module Gosu
       update_interval = _update_interval if _update_interval
       resizable = _resizable if _resizable
 
-      @__window = _create_window(width, height, fullscreen, update_interval, resizable)
-      @__text_input = nil
+      __window = _create_window(width, height, fullscreen, update_interval, resizable)
+      @memory_pointer = FFI::AutoPointer.new(__window, Gosu::Window.method(:release))
+      @text_input = nil
 
       @__update_proc       = proc { |data| protected_update }
       @__draw_proc         = proc { |data| protected_draw }
@@ -71,19 +72,20 @@ module Gosu
       @__needs_cursor_proc = proc { |data| protected_needs_cursor? }
       @__close_proc        = proc { |data| close }
 
-      _window_set_update(@__window, @__update_proc, nil)
-      _window_set_draw(@__window, @__draw_proc, nil)
-      _window_set_button_down(@__window, @__button_down_proc, nil)
-      _window_set_button_up(@__window, @__button_up_proc, nil)
-      _window_set_drop(@__window, @__drop_proc, nil)
-      _window_set_needs_redraw(@__window, @__needs_redraw_proc, nil)
-      _window_set_needs_cursor(@__window, @__needs_cursor_proc, nil)
-      _window_set_close(@__window, @__close_proc, nil)
+      _window_set_update(__pointer, @__update_proc, nil)
+      _window_set_draw(__pointer, @__draw_proc, nil)
+      _window_set_button_down(__pointer, @__button_down_proc, nil)
+      _window_set_button_up(__pointer, @__button_up_proc, nil)
+      _window_set_drop(__pointer, @__drop_proc, nil)
+      _window_set_needs_redraw(__pointer, @__needs_redraw_proc, nil)
+      _window_set_needs_cursor(__pointer, @__needs_cursor_proc, nil)
+      _window_set_close(__pointer, @__close_proc, nil)
+
     end
 
     # Returns FFI pointer of C side Gosu::Window
     def __pointer
-      @__window
+      @memory_pointer
     end
 
     def protected_draw
@@ -94,7 +96,7 @@ module Gosu
 
     def update; end
     def draw; end
-    def button_down(id); _window_gosu_button_down(@__window, id); end
+    def button_down(id); _window_gosu_button_down(__pointer, id); end
     def button_up(id); end
     def drop(filename); end
     def needs_redraw?; true; end
@@ -102,76 +104,76 @@ module Gosu
     def close; close!; end
 
     def caption
-      _window_caption(@__window)
+      _window_caption(__pointer)
     end
 
     def caption=(text)
-      _window_set_caption(@__window, text)
+      _window_set_caption(__pointer, text)
     end
 
     def fullscreen?
-      _window_is_fullscreen(@__window)
+      _window_is_fullscreen(__pointer)
     end
 
     def fullscreen=(boolean)
       raise ArgumentError "Expected boolean" unless boolean.is_a?(TrueClass) || boolean.is_a?(FalseClass)
-      _window_resize(@__window, self.width, self.height, boolean)
+      _window_resize(__pointer, self.width, self.height, boolean)
     end
 
     def resizable?
-      _window_is_resizable(@__window)
+      _window_is_resizable(__pointer)
     end
 
     def text_input
-      Gosu::TextInput.__from_pointer(_window_text_input(@__window))
+      @text_input ? @text_input : nil
     end
 
     def text_input=(text_input)
       raise ArgumentError, "text_input must be a Gosu::TextInput" unless text_input.is_a?(Gosu::TextInput) || text_input == nil
       ptr = text_input ? text_input.__pointer : nil
-      @__text_input = ptr
+      @text_input = text_input
 
-      _window_set_text_input(@__window, ptr)
+      _window_set_text_input(__pointer, ptr)
     end
 
     def update_interval
-      _window_update_interval(@__window)
+      _window_update_interval(__pointer)
     end
 
     def update_interval=(double)
-      _window_set_update_interval(@__window, double)
+      _window_set_update_interval(__pointer, double)
     end
 
     def width
-      _window_width(@__window)
+      _window_width(__pointer)
     end
 
     def width=(int)
-      _window_resize(@__window, int, height, fullscreen?)
+      _window_resize(__pointer, int, height, fullscreen?)
     end
 
     def height
-      _window_height(@__window)
+      _window_height(__pointer)
     end
 
     def height=(int)
-      _window_resize(@__window, width, int, fullscreen?)
+      _window_resize(__pointer, width, int, fullscreen?)
     end
 
     def mouse_x
-      _window_mouse_x(@__window)
+      _window_mouse_x(__pointer)
     end
 
     def mouse_x=(double)
-      _window_set_mouse_x(@__window, double)
+      _window_set_mouse_x(__pointer, double)
     end
 
     def mouse_y
-      _window_mouse_y(@__window)
+      _window_mouse_y(__pointer)
     end
 
     def mouse_y=(double)
-      _window_set_mouse_y(@__window, double)
+      _window_set_mouse_y(__pointer, double)
     end
 
     def set_mouse_position(x, y)
@@ -180,7 +182,7 @@ module Gosu
     end
 
     def show
-      _window_show(@__window)
+      _window_show(__pointer)
 
       if defined?(@__exception)
         raise @__exception
@@ -188,7 +190,7 @@ module Gosu
     end
 
     def tick
-      _window_tick(@__window)
+      _window_tick(__pointer)
     end
 
     def close
@@ -196,11 +198,11 @@ module Gosu
     end
 
     def close!
-      _window_close_immediately(@__window)
+      _window_close_immediately(__pointer)
     end
 
-    def free_object
-      _destroy_window(@__window)
+    def self.release(pointer)
+      _destroy_window(pointer)
     end
   end
 end

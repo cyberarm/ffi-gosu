@@ -20,65 +20,52 @@ module Gosu
     def self.current_song
       ptr = _song_current_song
       unless ptr.null?
-        Gosu::Song.new(_song_current_song)
+        @@current_song
       else
         nil
       end
     end
 
-    def initialize(filename_or_pointer)
-      if filename_or_pointer.is_a?(String)
-        @__song = _create_song(filename_or_pointer)
-      elsif filename_or_pointer.is_a?(FFI::Pointer)
-        @__song = filename_or_pointer
-      else
-        pp filename_or_pointer
-        raise ArgumentError
-      end
+    def initialize(filename)
+      __song = _create_song(filename)
+      @memory_pointer = FFI::AutoPointer.new(__song, Gosu::Song.method(:release))
     end
 
     def __pointer
-      @__song
+      @memory_pointer
     end
 
     def play(looping = false)
-      _song_play(@__song, looping)
+      @@current_song = self
+      _song_play(__pointer, looping)
     end
 
     def playing?
-      _song_playing(@__song)
+      _song_playing(__pointer)
     end
 
     def pause
-      _song_pause(@__song)
+      _song_pause(__pointer)
     end
 
     def paused?
-      _song_paused(@__song)
+      _song_paused(__pointer)
     end
 
     def stop
-      _song_stop(@__song)
+      _song_stop(__pointer)
     end
 
     def volume
-      _song_volume(@__song)
+      _song_volume(__pointer)
     end
 
     def volume=(double)
-      _song_set_volume(@__song, double.clamp(0.0, 1.0))
+      _song_set_volume(__pointer, double.clamp(0.0, 1.0))
     end
-  end
 
-  def eql?(other)
-    __pointer.address == other&.__pointer&.address
-  end
-
-  def ==(other)
-    eql?(other)
-  end
-
-  def free_object
-    _destroy_song(@__song)
+    def self.release(pointer)
+      _destroy_song(pointer)
+    end
   end
 end

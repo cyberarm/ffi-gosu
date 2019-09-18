@@ -10,23 +10,24 @@ module Gosu
     attach_function :_sample_play_pan, :Gosu_Sample_play_pan, [:pointer, :double, :double, :double, :bool], :pointer
 
     def initialize(filename)
-      @__sample = _create_sample(filename)
+      __sample = _create_sample(filename)
+      @memory_pointer = FFI::AutoPointer.new(__sample, Gosu::Sample.method(:release))
     end
 
     def __pointer
-      @__sample
+      @memory_pointer
     end
 
     def play(volume = 1, speed = 1, looping = false)
-      Gosu::Channel.new( _sample_play(@__sample, volume, speed, looping) )
+      Gosu::Channel.new( _sample_play(__pointer, volume, speed, looping) )
     end
 
     def play_pan(pan = 0, volume = 1, speed = 1, looping = false)
-      Gosu::Channel.new( _sample_play_pan(@__sample, pan, volume, speed, looping) )
+      Gosu::Channel.new( _sample_play_pan(__pointer, pan, volume, speed, looping) )
     end
 
-    def free_object
-      _destroy_sample(@__sample)
+    def self.release(pointer)
+      _destroy_sample(pointer)
     end
   end
 end

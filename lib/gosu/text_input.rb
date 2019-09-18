@@ -21,46 +21,40 @@ module Gosu
     attach_function :_textinput_delete_backward, :Gosu_TextInput_delete_backward, [:pointer], :void
     attach_function :_textinput_delete_forward,  :Gosu_TextInput_delete_forward,  [:pointer], :void
 
-    @@text_inputs = {}
-
-    def self.__from_pointer(pointer)
-      @@text_inputs.dig(pointer.address)
-    end
-
     def initialize
-      @__text_input = _create_textinput
-      @@text_inputs[@__text_input.address] = self
+      __text_input = _create_textinput
+      @memory_pointer = FFI::AutoPointer.new(__text_input, Gosu::TextInput.method(:release))
 
       @__filter_proc = proc { |data, text| protected_filter(text) }
-      _textinput_set_filter(@__text_input, @__filter_proc, nil)
+      _textinput_set_filter(__pointer, @__filter_proc, nil)
     end
 
     def __pointer
-      @__text_input
+      @memory_pointer
     end
 
     def text
-      _textinput_text(@__text_input)
+      _textinput_text(__pointer)
     end
 
     def text=(string)
-      _textinput_set_text(@__text_input, string)
+      _textinput_set_text(__pointer, string)
     end
 
     def caret_pos
-      _textinput_caret_pos(@__text_input)
+      _textinput_caret_pos(__pointer)
     end
 
     def caret_pos=(int)
-      _textinput_set_caret_pos(@__text_input, int)
+      _textinput_set_caret_pos(__pointer, int)
     end
 
     def selection_start
-      _textinput_selection_start(@__text_input)
+      _textinput_selection_start(__pointer)
     end
 
     def selection_start=(int)
-      _textinput_set_selection_start(@__text_input, int)
+      _textinput_set_selection_start(__pointer, int)
     end
 
     def filter(text)
@@ -68,22 +62,21 @@ module Gosu
     end
 
     def delete_backward
-      _textinput_delete_backward(@__text_input)
+      _textinput_delete_backward(__pointer)
     end
 
     def delete_forward
-      _textinput_delete_forward(@__text_input)
+      _textinput_delete_forward(__pointer)
     end
 
     # Ensures that filter_result is set on C side before filter callback returns
     private def protected_filter(text)
       string = filter(text)
-      _textinput_set_filter_result(@__text_input, string)
+      _textinput_set_filter_result(__pointer, string)
     end
 
-    def free_object
-      _destroy_textinput(@__text_input)
-      @@text_inputs[@__text_input.address] = nil
+    def self.release(pointer)
+      _destroy_textinput(pointer)
     end
   end
 end
