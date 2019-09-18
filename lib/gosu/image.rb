@@ -84,7 +84,7 @@ module Gosu
             object.respond_to?(:columns)
             object.respond_to?(:rows)
 
-        blob_bytes = object.to_blob.bytes
+        blob_bytes = object.to_blob { self.format = 'RGBA'; self.depth = 8 }.bytes
         FFI::MemoryPointer.new(:uchar, blob_bytes.size) do |blob|
           blob.write_array_of_type(:uchar, :put_uchar, blob_bytes)
           @__image = _create_image_from_blob(blob, blob_bytes.size, object.columns, object.rows, Gosu.image_flags(retro: retro))
@@ -138,7 +138,18 @@ module Gosu
     end
 
     def insert(image, x, y)
-      _image_insert(@__image, image.__pointer, x, y)
+      image_ = nil
+      if image.is_a?(Gosu::Image)
+        image_ = image_.__pointer
+      elsif image.respond_to?(:to_blob) &&
+            image.respond_to?(:rows) &&
+            image.respond_to?(:columns)
+        image_ = Gosu::Image.new(image).__pointer
+      else
+        raise "Unable to insert image!"
+      end
+
+      _image_insert(@__image, image_, x, y)
     end
 
     def gl_tex_info
