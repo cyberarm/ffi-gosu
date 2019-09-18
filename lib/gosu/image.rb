@@ -8,7 +8,7 @@ module Gosu
 
     attach_function :_create_image_from_markup, :Gosu_Image_create_from_markup,   [:string, :string, :double, :int, :double, :uint32, :uint32, :uint32], :pointer
     attach_function :_create_image_from_text,   :Gosu_Image_create_from_text,     [:string, :string, :double, :int, :double, :uint32, :uint32, :uint32], :pointer
-    attach_function :_create_image_from_blob,   :Gosu_Image_create_from_blob,     [:pointer, :int, :int, :int, :uint32],                                 :pointer
+    attach_function :_create_image_from_blob,   :Gosu_Image_create_from_blob,     [:pointer, :ulong, :int, :int, :uint32],                               :pointer
     attach_function :_image_subimage,           :Gosu_Image_create_from_subimage, [:pointer, :int, :int, :int, :int],                                    :pointer
     attach_function :_image_load_tiles,         :Gosu_Image_create_from_tiles,    [:pointer, :int, :int, :pointer, :int, :uint32],                       :void
 
@@ -76,10 +76,10 @@ module Gosu
 
     def initialize(object, retro: false, tileable: false)
       if object.is_a?(String)
-        @__image = _create_image(object, Gosu.image_flags(retro: retro, tileable: tileable))
+        __image = _create_image(object, Gosu.image_flags(retro: retro, tileable: tileable))
 
       elsif object.is_a?(FFI::Pointer)
-        @__image = object
+        __image = object
       elsif object.respond_to?(:to_blob) &&
             object.respond_to?(:columns)
             object.respond_to?(:rows)
@@ -87,36 +87,38 @@ module Gosu
         blob_bytes = object.to_blob { self.format = 'RGBA'; self.depth = 8 }.bytes
         FFI::MemoryPointer.new(:uchar, blob_bytes.size) do |blob|
           blob.write_array_of_type(:uchar, :put_uchar, blob_bytes)
-          @__image = _create_image_from_blob(blob, blob_bytes.size, object.columns, object.rows, Gosu.image_flags(retro: retro))
+          __image = _create_image_from_blob(blob, blob_bytes.size, object.columns, object.rows, Gosu.image_flags(retro: retro))
         end
 
-        raise "Failed to load image from blob" if @__image.null?
+        raise "Failed to load image from blob" if __image.null?
       else
         pp object
         raise ArgumentError
       end
 
-      raise RuntimeError unless @__image
+      raise RuntimeError unless __image
+
+      @managed_pointer = FFI::AutoPointer.new(__image, Gosu::Image.method(:release))
     end
 
     def __pointer
-      @__image
+      @managed_pointer
     end
 
     def width
-      _image_width(@__image)
+      _image_width(__pointer)
     end
 
     def height
-      _image_height(@__image)
+      _image_height(__pointer)
     end
 
     def draw(x, y, z, scale_x = 1, scale_y = 1, color = Gosu::Color::WHITE, flags = :default)
-      _image_draw(@__image, x, y, z, scale_x, scale_y, Gosu.color_to_drawop(color), Gosu.blendmode(flags))
+      _image_draw(__pointer, x, y, z, scale_x, scale_y, Gosu.color_to_drawop(color), Gosu.blendmode(flags))
     end
 
     def draw_rot(x, y, z, angle, center_x = 0.5, center_y = 0.5, scale_x = 1, scale_y = 1, color = Gosu::Color::WHITE, flags = :default)
-      _image_draw_rot(@__image, x, y, z, angle, center_x, center_y, scale_x, scale_y, Gosu.color_to_drawop(color), Gosu.blendmode(flags))
+      _image_draw_rot(__pointer, x, y, z, angle, center_x, center_y, scale_x, scale_y, Gosu.color_to_drawop(color), Gosu.blendmode(flags))
     end
 
     def draw_as_quad(x1, y1, color1, x2, y2, color2, x3, y3, color3, x4, y4, color4, z = 0, mode = :default)
@@ -126,15 +128,15 @@ module Gosu
     end
 
     def save(filename)
-      _image_save(@__image, filename)
+      _image_save(__pointer, filename)
     end
 
     def to_blob
-      _image_to_blob(@__image).read_string(width * height * Gosu::Color::SIZEOF)
+      _image_to_blob(__pointer).read_string(width * height * Gosu::Color::SIZEOF)
     end
 
     def subimage(left, top, width, height)
-      Gosu::Image.new( _image_subimage(@__image, left, top, width, height) )
+      Gosu::Image.new( _image_subimage(__pointer, left, top, width, height) )
     end
 
     def insert(image, x, y)
@@ -149,17 +151,16 @@ module Gosu
         raise "Unable to insert image!"
       end
 
-      _image_insert(@__image, image_, x, y)
+      _image_insert(__pointer, image_, x, y)
     end
 
     def gl_tex_info
-      tex_info = _image_gl_tex_info(@__image)
+      tex_info = _image_gl_tex_info(__pointer)
       tex_info ? GLTexInfo.new(tex_info) : nil
     end
 
-    # TODO: investigate if/how to have ruby's GC handle this
-    def free_object
-      _destroy_image(@__image)
+    def self.release(pointer)
+      Gosu::Image._destroy_image(pointer)
     end
   end
 end
