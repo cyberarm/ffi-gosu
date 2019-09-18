@@ -46,8 +46,8 @@ module Gosu
     attach_function :_window_update_interval,     :Gosu_Window_update_interval,     [:pointer],                    :double
     attach_function :_window_set_update_interval, :Gosu_Window_set_update_interval, [:pointer, :double],           :void
     attach_function :_window_resize,              :Gosu_Window_resize,              [:pointer, :int, :int, :bool], :void
-    attach_function :_window_fullscreen,          :Gosu_Window_fullscreen,          [:pointer],                    :bool
-    attach_function :_window_resizable,           :Gosu_Window_resizable,           [:pointer],                    :bool
+    attach_function :_window_is_fullscreen,       :Gosu_Window_is_fullscreen,       [:pointer],                    :bool
+    attach_function :_window_is_resizable,        :Gosu_Window_is_resizable,        [:pointer],                    :bool
 
     attach_function :_window_text_input,          :Gosu_Window_text_input,          [:pointer],                    :pointer
     attach_function :_window_set_text_input,      :Gosu_Window_set_text_input,      [:pointer, :pointer],          :void
@@ -110,7 +110,7 @@ module Gosu
     end
 
     def fullscreen?
-      _window_fullscreen(@__window)
+      _window_is_fullscreen(@__window)
     end
 
     def fullscreen=(boolean)
@@ -119,7 +119,7 @@ module Gosu
     end
 
     def resizable?
-      _window_resizable(@__window)
+      _window_is_resizable(@__window)
     end
 
     def text_input
