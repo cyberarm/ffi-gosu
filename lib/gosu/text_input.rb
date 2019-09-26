@@ -38,7 +38,7 @@ module Gosu
     end
 
     def text=(string)
-      _textinput_set_text(__pointer, string)
+      _textinput_set_text(__pointer, string.to_s)
     end
 
     def caret_pos
