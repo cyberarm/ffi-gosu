@@ -3,6 +3,8 @@ module Gosu
     extend FFI::Library
     ffi_lib Gosu::LIBRARY_PATH
 
+    callback :_callback_for_tiles, [:pointer, :pointer], :void
+
     attach_function :_create_image,      :Gosu_Image_create,     [:string, :uint32], :pointer
     attach_function :_destroy_image,     :Gosu_Image_destroy,    [:pointer],         :void
 
@@ -10,7 +12,7 @@ module Gosu
     attach_function :_create_image_from_text,   :Gosu_Image_create_from_text,     [:string, :string, :double, :int, :double, :uint32, :uint32, :uint32], :pointer
     attach_function :_create_image_from_blob,   :Gosu_Image_create_from_blob,     [:pointer, :ulong, :int, :int, :uint32],                               :pointer
     attach_function :_image_subimage,           :Gosu_Image_create_from_subimage, [:pointer, :int, :int, :int, :int],                                    :pointer
-    attach_function :_image_load_tiles,         :Gosu_Image_create_from_tiles,    [:pointer, :int, :int, :pointer, :int, :uint32],                       :void
+    attach_function :_image_load_tiles,         :Gosu_Image_create_from_tiles,    [:string, :int, :int, :_callback_for_tiles, :pointer, :uint32],        :void
 
     attach_function :_image_width,       :Gosu_Image_width,      [:pointer], :int
     attach_function :_image_height,      :Gosu_Image_height,     [:pointer], :int
@@ -41,35 +43,9 @@ module Gosu
     def self.load_tiles(filename, tile_width ,tile_height, retro: false, tileable: false)
       flags = Gosu.image_flags(retro: retro, tileable: tileable)
 
-      tiles_x, tiles_y = 0, 0
-      bmp = Gosu::Image.new(filename)
-
-      if (tile_width > 0)
-        tiles_x = bmp.width / tile_width
-      else
-        tiles_x = -tile_width;
-        tile_width = bmp.width / tiles_x
-      end
-
-      if (tile_height > 0)
-        tiles_y = bmp.height / tile_height
-      else
-        tiles_y = -tile_height;
-        tile_height = bmp.height / tiles_y
-      end
-
-      array_size = tiles_x * tiles_y
-      buffer = FFI::MemoryPointer.new(:pointer, array_size)
-      _image_load_tiles(filename, tile_width, tile_width, buffer, array_size, flags)
-
       images = []
-      # buffer points to the 0th array index
-      # need to read the pointer at that location to
-      # get pointer of Gosu::Image
-      array_size.times do |i|
-        ptr = FFI::Pointer.new(buffer.address + i * Fiddle::SIZEOF_VOIDP).read_pointer
-        images << Gosu::Image.new(ptr, retro: retro, tileable: tileable)
-      end
+      callback = proc { |data, image| images << Gosu::Image.new(image, retro: retro, tileable: tileable) }
+      _image_load_tiles(filename, tile_width, tile_height, callback, nil, flags)
 
       return images
     end
