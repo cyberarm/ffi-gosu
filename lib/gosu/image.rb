@@ -133,7 +133,7 @@ module Gosu
     end
 
     def gl_tex_info
-      tex_info = _image_gl_tex_info(__pointer)
+      tex_info = _image_gl_tex_info_create(__pointer)
       tex_info ? GLTexInfo.new(tex_info) : nil
     end
 
