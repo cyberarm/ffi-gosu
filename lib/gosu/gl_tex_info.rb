@@ -1,5 +1,5 @@
 module Gosu
-  class GLTexInfo < FFI::Struct
+  class GLTexInfo < FFI::ManagedStruct
     layout  :tex_name, :int,
             :left,     :double,
             :right,    :double,
@@ -24,6 +24,10 @@ module Gosu
 
     def bottom
       self[:bottom]
+    end
+
+    def self.release(pointer)
+      Gosu::Image._image_gl_tex_info_destroy(pointer)
     end
   end
 end

@@ -67,10 +67,10 @@ module Gosu
       @__draw_proc         = proc { |data| protected_draw }
       @__button_down_proc  = proc { |data, id| protected_button_down(id) }
       @__button_up_proc    = proc { |data, id| protected_button_up(id) }
-      @__drop_proc         = proc { |data, filename| drop(filename) }
+      @__drop_proc         = proc { |data, filename| protected_drop(filename) }
       @__needs_redraw_proc = proc { |data| protected_needs_redraw? }
       @__needs_cursor_proc = proc { |data| protected_needs_cursor? }
-      @__close_proc        = proc { |data| close }
+      @__close_proc        = proc { |data| protected_close }
 
       _window_set_update(__pointer, @__update_proc, nil)
       _window_set_draw(__pointer, @__draw_proc, nil)

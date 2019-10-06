@@ -26,7 +26,9 @@ module Gosu
     attach_function :_image_save,        :Gosu_Image_save,        [:pointer, :string],              :void
     attach_function :_image_to_blob,     :Gosu_Image_to_blob,     [:pointer],                       :pointer
     attach_function :_image_insert,      :Gosu_Image_insert,      [:pointer, :pointer, :int, :int], :pointer
-    attach_function :_image_gl_tex_info, :Gosu_Image_gl_tex_info, [:pointer],                       :pointer
+
+    attach_function :_image_gl_tex_info_create,  :Gosu_Image_gl_tex_info_create,  [:pointer],       :pointer
+    attach_function :_image_gl_tex_info_destroy, :Gosu_Image_gl_tex_info_destroy, [:pointer],       :void
 
     def self.from_text(markup, line_height, font: Gosu.default_font_name, width: -1, spacing: 0, align: :left,
                        bold: false, italic: false, underline: false, retro: false)
