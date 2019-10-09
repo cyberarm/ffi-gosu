@@ -32,7 +32,10 @@ module Gosu
   attach_function :milliseconds, :Gosu_milliseconds,           [], :long
   attach_function :default_font_name, :Gosu_default_font_name, [], :string
 
-  # attach_function :_transform, :Gosu_transform, [:double, :double, :_callback_with_block], :void
+  attach_function :_transform, :Gosu_transform, [:double, :double, :double, :double, :double, :double, :double, :double,
+                                                 :double, :double, :double, :double, :double, :double, :double, :double,
+                                                 :_callback_with_block
+                                                ], :void
   attach_function :_translate, :Gosu_translate, [:double, :double, :_callback_with_block], :void
   attach_function :_rotate,    :Gosu_rotate,    [:double, :double, :double, :_callback_with_block], :void
   attach_function :_scale,     :Gosu_scale,     [:double, :double, :double, :double, :_callback_with_block], :void
@@ -90,6 +93,10 @@ module Gosu
 
   def self.record(width, height, &block)
     Gosu::Image.new(_record(width, height, block))
+  end
+
+  def self.transform(e0, e1, e2, e3, e4, e5, e6, e7, e8, e9, e10, e11, e12, e13, e14, e15, &block)
+    _transform(e0, e1, e2, e3, e4, e5, e6, e7, e8, e9, e10, e11, e12, e13, e14, e15, block)
   end
 
   def self.translate(x, y, &block)
