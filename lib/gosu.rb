@@ -88,7 +88,7 @@ module Gosu
   end
 
   def self.render(width, height, retro: false, &block)
-    Gosu::Image.new(_render(width, height, block, 0x00000000))
+    Gosu::Image.new(_render(width, height, block, Gosu.image_flags(retro: retro)))
   end
 
   def self.record(width, height, &block)

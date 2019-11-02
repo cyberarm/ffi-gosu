@@ -8,11 +8,12 @@ module Gosu
     attach_function :_create_image,      :Gosu_Image_create,     [:string, :uint32], :pointer
     attach_function :_destroy_image,     :Gosu_Image_destroy,    [:pointer],         :void
 
-    attach_function :_create_image_from_markup, :Gosu_Image_create_from_markup,   [:string, :string, :double, :int, :double, :uint32, :uint32, :uint32], :pointer
-    attach_function :_create_image_from_text,   :Gosu_Image_create_from_text,     [:string, :string, :double, :int, :double, :uint32, :uint32, :uint32], :pointer
-    attach_function :_create_image_from_blob,   :Gosu_Image_create_from_blob,     [:pointer, :ulong, :int, :int, :uint32],                               :pointer
-    attach_function :_image_subimage,           :Gosu_Image_create_from_subimage, [:pointer, :int, :int, :int, :int],                                    :pointer
-    attach_function :_image_load_tiles,         :Gosu_Image_create_from_tiles,    [:string, :int, :int, :_callback_for_tiles, :pointer, :uint32],        :void
+    attach_function :_create_image_from_markup,    :Gosu_Image_create_from_markup,       [:string, :string, :double, :int, :double, :uint32, :uint32, :uint32], :pointer
+    attach_function :_create_image_from_text,      :Gosu_Image_create_from_text,         [:string, :string, :double, :int, :double, :uint32, :uint32, :uint32], :pointer
+    attach_function :_create_image_from_blob,      :Gosu_Image_create_from_blob,         [:pointer, :ulong, :int, :int, :uint32],                               :pointer
+    attach_function :_image_subimage,              :Gosu_Image_create_from_subimage,     [:pointer, :int, :int, :int, :int],                                    :pointer
+    attach_function :_image_load_tiles,            :Gosu_Image_create_from_tiles,        [:string,  :int, :int, :_callback_for_tiles, :pointer, :uint32],       :void
+    attach_function :_image_load_tiles_from_image, :Gosu_Image_create_tiles_from_image,  [:pointer, :int, :int, :_callback_for_tiles, :pointer, :uint32],       :void
 
     attach_function :_image_width,       :Gosu_Image_width,      [:pointer], :int
     attach_function :_image_height,      :Gosu_Image_height,     [:pointer], :int
@@ -42,12 +43,21 @@ module Gosu
                       Gosu.font_alignment_flags(align), Gosu.font_flags(bold, italic, underline), Gosu.image_flags(retro: retro)) )
     end
 
-    def self.load_tiles(filename, tile_width ,tile_height, retro: false, tileable: false)
+    def self.load_tiles(filename_or_image, tile_width ,tile_height, retro: false, tileable: false)
       flags = Gosu.image_flags(retro: retro, tileable: tileable)
 
       images = []
       callback = proc { |data, image| images << Gosu::Image.new(image, retro: retro, tileable: tileable) }
-      _image_load_tiles(filename, tile_width, tile_height, callback, nil, flags)
+
+      if filename_or_image.is_a?(String)
+        _image_load_tiles(filename_or_image, tile_width, tile_height, callback, nil, flags)
+      else
+        if filename_or_image.instance_of?(Gosu::Image)
+          _image_load_tiles_from_image(filename_or_image.__pointer, tile_width, tile_height, callback, nil, flags)
+        else
+          _image_load_tiles_from_image(Gosu::Image.new(filename_or_image, retro: retro, tileable: tileable).__pointer, tile_width, tile_height, callback, nil, flags)
+        end
+      end
 
       return images
     end

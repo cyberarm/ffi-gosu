@@ -2,7 +2,7 @@ module Gosu
   LIBRARY_PATH = File.expand_path("../../../gosu/cmake/build/libgosu.so", File.dirname(__FILE__))
 
   extend FFI::Library
-  ffi_lib Gosu::LIBRARY_PATH
+  ffi_lib "gosu", Gosu::LIBRARY_PATH
 
   # Strings
   constants = [

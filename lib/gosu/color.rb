@@ -141,7 +141,7 @@ module Gosu
     end
 
     def ==(other)
-      gl == other.gl
+      gl == other&.gl
     end
 
     def <(other)
