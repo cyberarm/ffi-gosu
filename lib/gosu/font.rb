@@ -73,7 +73,7 @@ module Gosu
     end
 
     def draw_rel(*args)
-      _font_draw_markup_rel(*args)
+      draw_markup_rel(*args)
     end
 
     def draw_text_rel(text, x, y, z, rel_x, rel_y, scale_x = 1, scale_y = 1, c = Gosu::Color::WHITE, mode = :default)
