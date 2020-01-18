@@ -31,6 +31,12 @@ module Gosu
     attach_function :_image_gl_tex_info_create,  :Gosu_Image_gl_tex_info_create,  [:pointer],       :pointer
     attach_function :_image_gl_tex_info_destroy, :Gosu_Image_gl_tex_info_destroy, [:pointer],       :void
 
+    BlobHelper = Struct.new(:columns, :rows, :to_blob)
+
+    def self.from_blob(width, height, rgba = "\0\0\0\0" * (width * height))
+      self.new(BlobHelper.new(width, height, rgba))
+    end
+
     def self.from_text(markup, line_height, font: Gosu.default_font_name, width: -1, spacing: 0, align: :left,
                        bold: false, italic: false, underline: false, retro: false)
       Gosu::Image.new( _create_image_from_markup(markup, font, line_height, width, spacing,
@@ -130,7 +136,7 @@ module Gosu
     def insert(image, x, y)
       image_ = nil
       if image.is_a?(Gosu::Image)
-        image_ = image_.__pointer
+        image_ = image.__pointer
       elsif image.respond_to?(:to_blob) &&
             image.respond_to?(:rows) &&
             image.respond_to?(:columns)
