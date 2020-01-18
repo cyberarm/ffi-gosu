@@ -1,7 +1,7 @@
 gem "minitest"
 require "minitest/autorun"
 
-require_relative "../lib/gosu" unless defined? Gosu
+require_relative "../lib/gosu" unless defined?(Gosu) && defined?(Gosu::Window)
 
 class Gosu::Image
   # Gosu does not implement this method by default because it is very inefficient.
