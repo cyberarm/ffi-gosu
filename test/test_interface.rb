@@ -1,28 +1,6 @@
 # Encoding: UTF-8
 require_relative 'test_helper'
 
-# Make a backup of the Gosu modules and its helpers on Numeric.
-OrigGosu = Gosu
-Object.send :remove_const, :Gosu
-%w(gosu_to_radians radians_to_gosu degrees_to_radians radians_to_degrees).each do |helper|
-  Numeric.send :alias_method, :"orig_#{helper}", :"#{helper}"
-  Numeric.send :undef_method, :"#{helper}"
-end
-
-# Now load Gosu's documentation, a module that is only filled with method stubs, into GosuDocs.
-require_relative "../rdoc/gosu.rb"
-GosuDocs = Gosu
-Object.send :remove_const, :Gosu
-
-# And finally, restore the real Gosu module.
-Gosu = OrigGosu
-Object.send :remove_const, :OrigGosu
-%w(gosu_to_radians radians_to_gosu degrees_to_radians radians_to_degrees).each do |helper|
-  Numeric.send :undef_method, :"#{helper}"
-  Numeric.send :alias_method, :"#{helper}", :"orig_#{helper}"
-  Numeric.send :undef_method, :"orig_#{helper}"
-end
-
 # This undoes the hack in rdoc/gosu.rb where constants like :KB_F1…KB_F12 are defined to keep the
 # generated rdoc short. Given this constant, it would return [:KB_F1, ..., :KB_F12].
 def unpack_range(constant)
@@ -41,7 +19,7 @@ def unpack_range(constant)
 end
 
 class TestInterface < Minitest::Test
-  DOCUMENTED_CONSTANTS = GosuDocs.constants.map { |constant| unpack_range(constant) }.flatten
+  DOCUMENTED_CONSTANTS = Gosu.constants.map { |constant| unpack_range(constant) }.flatten
 
   def test_all_constants_exist
     DOCUMENTED_CONSTANTS.each do |constant|
@@ -51,7 +29,7 @@ class TestInterface < Minitest::Test
       end
     end
   end
-  
+
   def test_constant_types
     DOCUMENTED_CONSTANTS.each do |constant|
       case constant
@@ -67,7 +45,7 @@ class TestInterface < Minitest::Test
         "Gosu::#{constant} must be #{expected_class}, but is #{Gosu.const_get(constant).class}"
     end
   end
-  
+
   def test_no_extra_constants
     Gosu.constants.each do |constant|
       next if constant == :Button # backwards compatibility
@@ -77,18 +55,18 @@ class TestInterface < Minitest::Test
       next if constant == :DEPRECATION_STACKTRACE_LINES # implementation detail for backwards compatibility
       next if constant == :ImmutableColor # implementation detail
       next if constant == :MAX_TEXTURE_SIZE # not sure if we still need this :/
-      
+
       assert DOCUMENTED_CONSTANTS.include?(constant), "Unexpected Gosu::#{constant}"
     end
   end
-  
+
   def test_methods_exist
-    GosuDocs.constants.each do |constant|
-      doc_class = GosuDocs.const_get(constant)
+    Gosu.constants.each do |constant|
+      doc_class = Gosu.const_get(constant)
       next unless doc_class.is_a? Class
-      
+
       real_class = Gosu.const_get(constant)
-      
+
       doc_class.public_methods(false).each do |method|
         assert real_class.public_methods.include?(method), "Gosu::#{constant}.#{method} missing"
       end
@@ -98,7 +76,7 @@ class TestInterface < Minitest::Test
       end
     end
   end
-  
+
   # Every string argument in Gosu must accept numbers and nil (= empty string) for backwards
   # compatibility.
   # https://www.reddit.com/r/gosu/comments/5t79pu/expected_argument_1_of_type_stdstring_const_but
