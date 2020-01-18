@@ -1,15 +1,14 @@
-# Ffi::Gosu
+[![Actions Status](https://github.com/cyberarm/ffi-gosu/workflows/Ruby%20CI/badge.svg?branch=master)](https://github.com/cyberarm/ffi-gosu/actions)
+# Gosu - FFI Edition
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/gosu`. To experiment with that code, run `bin/console` for an interactive prompt.
-
-TODO: Delete this and the text above, and describe your gem
+This gem interfaces with the, currently under development, C API for the Gosu game library.
 
 ## Installation
 
 Add this line to your application's Gemfile:
 
 ```ruby
-gem 'ffi-gosu'
+gem "ffi-gosu", require: "gosu"
 ```
 
 And then execute:
@@ -22,7 +21,7 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+Where possibly this gem replicates the Ruby/Gosu gem, however, deprecated methods and constructors are not implemented.
 
 ## Development
 
