@@ -33,10 +33,10 @@ class TestInterface < Minitest::Test
   def test_constant_types
     DOCUMENTED_CONSTANTS.each do |constant|
       case constant
+      when :VERSION, :LICENSES, :GEM_VERSION
+        expected_class = String
       when /(KB_|GP_|MS_)/, /_VERSION/
         expected_class = Integer
-      when :VERSION, :LICENSES
-        expected_class = String
       else
         next
       end

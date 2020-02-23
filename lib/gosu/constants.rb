@@ -4,10 +4,11 @@ module Gosu
   extend FFI::Library
   ffi_lib "gosu", Gosu::LIBRARY_PATH
 
-  # Strings
-  constants = [
-    "VERSION",
-    "LICENSES",
+  # int
+  versions = [
+    "MAJOR_VERSION",
+    "MINOR_VERSION",
+    "POINT_VERSION"
   ]
 
   # uint32
@@ -256,12 +257,14 @@ module Gosu
     # Gosu.undef_method(:"#{const}")
   end
 
-  constants.each do |const|
-    attach_variable :"#{const}", :"Gosu_#{const}", :string
-
+  versions.each do |const|
+    attach_variable :"#{const}", :"Gosu_#{const}", :uint32
     Gosu.const_set(const, Gosu.send(:"#{const}"))
   end
 
-  constants = nil
-  buttons = nil
+  attach_function :VERSION, :Gosu_version, [], :string
+  attach_function :LICENSES, :Gosu_licenses, [], :string
+
+  Gosu.const_set("VERSION", Gosu.send(:VERSION))
+  Gosu.const_set("LICENSES", Gosu.send(:LICENSES))
 end
