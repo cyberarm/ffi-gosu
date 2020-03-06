@@ -4,15 +4,8 @@ module Gosu
   extend FFI::Library
   ffi_lib "gosu", Gosu::LIBRARY_PATH
 
-  # int
-  versions = [
-    "MAJOR_VERSION",
-    "MINOR_VERSION",
-    "POINT_VERSION"
-  ]
-
   # uint32
-  buttons = [
+  constants = [
     "KB_RANGE_BEGIN",
     "KB_ESCAPE",
     "KB_F1",
@@ -248,18 +241,44 @@ module Gosu
     "GP_NUM_PER_GAMEPAD",
   ]
 
-  buttons.each do |const|
+  constants = constants + [
+    "MAJOR_VERSION",
+    "MINOR_VERSION",
+    "POINT_VERSION"
+  ]
+
+  constants = constants + [
+    "AM_DEFAULT",
+    "AM_INTERPOLATE",
+    "AM_ADD",
+    "AM_MULTIPLY",
+
+    "FF_BOLD",
+    "FF_ITALIC",
+    "FF_UNDERLINE",
+    "FF_COMBINATIONS",
+
+    "AL_LEFT",
+    "AL_RIGHT",
+    "AL_CENTER",
+    "AL_JUSTIFY",
+
+    "IF_SMOOTH",
+    "IF_TILEABLE_LEFT",
+    "IF_TILEABLE_TOP",
+    "IF_TILEABLE_RIGHT",
+    "IF_TILEABLE_BOTTOM",
+    "IF_TILEABLE",
+    "IF_RETRO",
+  ]
+
+  constants.each do |const|
     attach_variable :"#{const}", :"Gosu_#{const}", :uint32
     Gosu.const_set(const, Gosu.send(:"#{const}"))
 
     # TODO: Remove Gosu.CONSTANT after setting Gosu::CONSTANT
     # puts "#{const}: #{Gosu.send(:"#{const}")}"
     # Gosu.undef_method(:"#{const}")
-  end
-
-  versions.each do |const|
-    attach_variable :"#{const}", :"Gosu_#{const}", :uint32
-    Gosu.const_set(const, Gosu.send(:"#{const}"))
   end
 
   attach_function :VERSION, :Gosu_version, [], :string
