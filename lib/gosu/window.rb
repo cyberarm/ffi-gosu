@@ -25,7 +25,7 @@ module Gosu
     attach_function :_window_set_close,        :Gosu_Window_set_close,        [:pointer, :_callback_window_close, :pointer],        :void
 
     # Enable gosu's default button_down fullscreen toggle
-    attach_function :_window_gosu_button_down, :Gosu_Window_gosu_button_down, [:pointer, :uint32], :void
+    attach_function :_window_default_button_down, :Gosu_Window_default_button_down, [:pointer, :uint32], :void
 
     attach_function :_window_show,                :Gosu_Window_show,                [:pointer],                    :void
     attach_function :_window_tick,                :Gosu_Window_tick,                [:pointer],                    :bool
@@ -96,7 +96,7 @@ module Gosu
 
     def update; end
     def draw; end
-    def button_down(id); _window_gosu_button_down(__pointer, id); end
+    def button_down(id); _window_default_button_down(__pointer, id); end
     def button_up(id); end
     def drop(filename); end
     def needs_redraw?; true; end
