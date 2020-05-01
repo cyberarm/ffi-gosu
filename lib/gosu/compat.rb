@@ -17,7 +17,7 @@ module Gosu
     # Compat code taken from gosu/gosu
 
     %w(update draw needs_redraw? needs_cursor?
-      lose_focus button_down button_up drop close).each do |callback|
+      lose_focus button_down button_up axis_motion drop close).each do |callback|
       define_method "protected_#{callback}" do |*args|
         begin
           # If there has been an exception, don't do anything as to not make matters worse.
