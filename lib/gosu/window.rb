@@ -3,28 +3,32 @@ module Gosu
     extend FFI::Library
     ffi_lib Gosu::LIBRARY_PATH
 
-    callback :_callback_window_draw,         [:pointer],          :void
-    callback :_callback_window_update,       [:pointer],          :void
-    callback :_callback_window_button_down,  [:pointer, :uint32], :void
-    callback :_callback_window_button_up,    [:pointer, :uint32], :void
-    callback :_callback_window_axis_motion,  [:pointer, :uint32, :double], :void
-    callback :_callback_window_drop,         [:pointer, :string], :void
-    callback :_callback_window_needs_redraw, [:pointer],          :bool
-    callback :_callback_window_needs_cursor, [:pointer],          :bool
-    callback :_callback_window_close,        [:pointer],          :bool
+    callback :_callback_window_draw,                 [:pointer],                   :void
+    callback :_callback_window_update,               [:pointer],                   :void
+    callback :_callback_window_button_down,          [:pointer, :uint32],          :void
+    callback :_callback_window_button_up,            [:pointer, :uint32],          :void
+    callback :_callback_window_axis_motion,          [:pointer, :uint32, :double], :void
+    callback :_callback_window_gamepad_connected,    [:pointer, :uint32, :string], :void
+    callback :_callback_window_gamepad_disconnected, [:pointer, :uint32],          :void
+    callback :_callback_window_drop,                 [:pointer, :string],          :void
+    callback :_callback_window_needs_redraw,         [:pointer],                   :bool
+    callback :_callback_window_needs_cursor,         [:pointer],                   :bool
+    callback :_callback_window_close,                [:pointer],                   :bool
 
     attach_function :_create_window,  :Gosu_Window_create,  [:int, :int, :bool, :double, :bool], :pointer
     attach_function :_destroy_window, :Gosu_Window_destroy, [:pointer],                          :void
 
-    attach_function :_window_set_draw,         :Gosu_Window_set_draw,         [:pointer, :_callback_window_draw, :pointer],         :void
-    attach_function :_window_set_update,       :Gosu_Window_set_update,       [:pointer, :_callback_window_update, :pointer],       :void
-    attach_function :_window_set_button_down,  :Gosu_Window_set_button_down,  [:pointer, :_callback_window_button_down, :pointer],  :void
-    attach_function :_window_set_button_up,    :Gosu_Window_set_button_up,    [:pointer, :_callback_window_button_up, :pointer],    :void
-    attach_function :_window_set_axis_motion,  :Gosu_Window_set_axis_motion,  [:pointer, :_callback_window_axis_motion, :pointer],  :void
-    attach_function :_window_set_drop,         :Gosu_Window_set_drop,         [:pointer, :_callback_window_drop, :pointer],         :void
-    attach_function :_window_set_needs_redraw, :Gosu_Window_set_needs_redraw, [:pointer, :_callback_window_needs_redraw, :pointer], :void
-    attach_function :_window_set_needs_cursor, :Gosu_Window_set_needs_cursor, [:pointer, :_callback_window_needs_cursor, :pointer], :void
-    attach_function :_window_set_close,        :Gosu_Window_set_close,        [:pointer, :_callback_window_close, :pointer],        :void
+    attach_function :_window_set_draw,                 :Gosu_Window_set_draw,                 [:pointer, :_callback_window_draw, :pointer],                 :void
+    attach_function :_window_set_update,               :Gosu_Window_set_update,               [:pointer, :_callback_window_update, :pointer],               :void
+    attach_function :_window_set_button_down,          :Gosu_Window_set_button_down,          [:pointer, :_callback_window_button_down, :pointer],          :void
+    attach_function :_window_set_button_up,            :Gosu_Window_set_button_up,            [:pointer, :_callback_window_button_up, :pointer],            :void
+    attach_function :_window_set_axis_motion,          :Gosu_Window_set_axis_motion,          [:pointer, :_callback_window_axis_motion, :pointer],          :void
+    attach_function :_window_set_gamepad_connected,    :Gosu_Window_set_gamepad_connected,    [:pointer, :_callback_window_gamepad_connected, :pointer],    :void
+    attach_function :_window_set_gamepad_disconnected, :Gosu_Window_set_gamepad_disconnected, [:pointer, :_callback_window_gamepad_disconnected, :pointer], :void
+    attach_function :_window_set_drop,                 :Gosu_Window_set_drop,                 [:pointer, :_callback_window_drop, :pointer],                 :void
+    attach_function :_window_set_needs_redraw,         :Gosu_Window_set_needs_redraw,         [:pointer, :_callback_window_needs_redraw, :pointer],         :void
+    attach_function :_window_set_needs_cursor,         :Gosu_Window_set_needs_cursor,         [:pointer, :_callback_window_needs_cursor, :pointer],         :void
+    attach_function :_window_set_close,                :Gosu_Window_set_close,                [:pointer, :_callback_window_close, :pointer],                :void
 
     # Enable gosu's default button_down fullscreen toggle
     attach_function :_window_default_button_down, :Gosu_Window_default_button_down, [:pointer, :uint32], :void
@@ -65,21 +69,25 @@ module Gosu
       @memory_pointer = FFI::AutoPointer.new(__window, Gosu::Window.method(:release))
       @text_input = nil
 
-      @__update_proc       = proc { |data| protected_update }
-      @__draw_proc         = proc { |data| protected_draw }
-      @__button_down_proc  = proc { |data, id| protected_button_down(id) }
-      @__button_up_proc    = proc { |data, id| protected_button_up(id) }
-      @__axis_motion_proc  = proc { |data, id, value| protected_axis_motion(id, value) }
-      @__drop_proc         = proc { |data, filename| protected_drop(filename) }
-      @__needs_redraw_proc = proc { |data| protected_needs_redraw? }
-      @__needs_cursor_proc = proc { |data| protected_needs_cursor? }
-      @__close_proc        = proc { |data| protected_close }
+      @__update_proc                  = proc { |data| protected_update }
+      @__draw_proc                    = proc { |data| protected_draw }
+      @__button_down_proc             = proc { |data, id| protected_button_down(id) }
+      @__button_up_proc               = proc { |data, id| protected_button_up(id) }
+      @__axis_motion_proc             = proc { |data, id, value| protected_axis_motion(id, value) }
+      @__gamepad_connected_proc    = proc { |data, id, name| protected_gamepad_connected(id, name) }
+      @__gamepad_disconnected_proc = proc { |data, id| protected_gamepad_disconnected(id) }
+      @__drop_proc                    = proc { |data, filename| protected_drop(filename) }
+      @__needs_redraw_proc            = proc { |data| protected_needs_redraw? }
+      @__needs_cursor_proc            = proc { |data| protected_needs_cursor? }
+      @__close_proc                   = proc { |data| protected_close }
 
       _window_set_update(__pointer, @__update_proc, nil)
       _window_set_draw(__pointer, @__draw_proc, nil)
       _window_set_button_down(__pointer, @__button_down_proc, nil)
       _window_set_button_up(__pointer, @__button_up_proc, nil)
       _window_set_axis_motion(__pointer, @__axis_motion_proc, nil)
+      _window_set_gamepad_connected(__pointer, @__gamepad_connected_proc, nil)
+      _window_set_gamepad_disconnected(__pointer, @__gamepad_disconnected_proc, nil)
       _window_set_drop(__pointer, @__drop_proc, nil)
       _window_set_needs_redraw(__pointer, @__needs_redraw_proc, nil)
       _window_set_needs_cursor(__pointer, @__needs_cursor_proc, nil)
@@ -103,6 +111,8 @@ module Gosu
     def button_down(id); _window_default_button_down(__pointer, id); end
     def button_up(id); end
     def axis_motion(id, value); end
+    def gamepad_connected(id, name); end
+    def gamepad_disconnected(id); end
     def drop(filename); end
     def needs_redraw?; true; end
     def needs_cursor?; false; end
