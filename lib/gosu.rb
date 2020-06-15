@@ -47,9 +47,11 @@ module Gosu
   attach_function :_record, :Gosu_record, [:int, :int, :_callback_with_block],          :pointer
 
   attach_function :_button_down, :Gosu_button_down,            [:uint32], :bool
-  attach_function :_axis,        :Gosu_axis,                   [:uint32], :double
+  attach_function :axis,        :Gosu_axis,                    [:uint32], :double
   attach_function :button_id_to_char, :Gosu_button_id_to_char, [:uint32], :string
   attach_function :char_to_button_id, :Gosu_button_char_to_id, [:string], :uint32
+  attach_function :_button_name, :Gosu_button_name,            [:uint32], :string
+  attach_function :_gamepad_name, :Gosu_gamepad_name,          [:uint32], :string
 
   attach_function :_draw_line, :Gosu_draw_line,         [:double, :double, :uint32, :double, :double, :uint32, :double, :uint32], :void
   attach_function :_draw_quad, :Gosu_draw_quad,         [:double, :double, :uint32, :double, :double, :uint32,
@@ -122,8 +124,14 @@ module Gosu
     _button_down(id)
   end
 
-  def self.axis(id)
-    _axis(id)
+  def self.button_name(id)
+    name = _button_name(id)
+    name.empty? ? nil : name
+  end
+
+  def self.gamepad_name(id)
+    name = _gamepad_name(id)
+    name.empty? ? nil : name
   end
 
   def self.draw_line(x1, y1, c1, x2, y2, c2, z = 0, mode = :default)

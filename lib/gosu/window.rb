@@ -7,8 +7,7 @@ module Gosu
     callback :_callback_window_update,               [:pointer],                   :void
     callback :_callback_window_button_down,          [:pointer, :uint32],          :void
     callback :_callback_window_button_up,            [:pointer, :uint32],          :void
-    callback :_callback_window_axis_motion,          [:pointer, :uint32, :double], :void
-    callback :_callback_window_gamepad_connected,    [:pointer, :uint32, :string], :void
+    callback :_callback_window_gamepad_connected,    [:pointer, :uint32],          :void
     callback :_callback_window_gamepad_disconnected, [:pointer, :uint32],          :void
     callback :_callback_window_drop,                 [:pointer, :string],          :void
     callback :_callback_window_needs_redraw,         [:pointer],                   :bool
@@ -22,7 +21,6 @@ module Gosu
     attach_function :_window_set_update,               :Gosu_Window_set_update,               [:pointer, :_callback_window_update, :pointer],               :void
     attach_function :_window_set_button_down,          :Gosu_Window_set_button_down,          [:pointer, :_callback_window_button_down, :pointer],          :void
     attach_function :_window_set_button_up,            :Gosu_Window_set_button_up,            [:pointer, :_callback_window_button_up, :pointer],            :void
-    attach_function :_window_set_axis_motion,          :Gosu_Window_set_axis_motion,          [:pointer, :_callback_window_axis_motion, :pointer],          :void
     attach_function :_window_set_gamepad_connected,    :Gosu_Window_set_gamepad_connected,    [:pointer, :_callback_window_gamepad_connected, :pointer],    :void
     attach_function :_window_set_gamepad_disconnected, :Gosu_Window_set_gamepad_disconnected, [:pointer, :_callback_window_gamepad_disconnected, :pointer], :void
     attach_function :_window_set_drop,                 :Gosu_Window_set_drop,                 [:pointer, :_callback_window_drop, :pointer],                 :void
@@ -73,8 +71,7 @@ module Gosu
       @__draw_proc                    = proc { |data| protected_draw }
       @__button_down_proc             = proc { |data, id| protected_button_down(id) }
       @__button_up_proc               = proc { |data, id| protected_button_up(id) }
-      @__axis_motion_proc             = proc { |data, id, value| protected_axis_motion(id, value) }
-      @__gamepad_connected_proc    = proc { |data, id, name| protected_gamepad_connected(id, name) }
+      @__gamepad_connected_proc    = proc { |data, id| protected_gamepad_connected(id) }
       @__gamepad_disconnected_proc = proc { |data, id| protected_gamepad_disconnected(id) }
       @__drop_proc                    = proc { |data, filename| protected_drop(filename) }
       @__needs_redraw_proc            = proc { |data| protected_needs_redraw? }
@@ -85,7 +82,6 @@ module Gosu
       _window_set_draw(__pointer, @__draw_proc, nil)
       _window_set_button_down(__pointer, @__button_down_proc, nil)
       _window_set_button_up(__pointer, @__button_up_proc, nil)
-      _window_set_axis_motion(__pointer, @__axis_motion_proc, nil)
       _window_set_gamepad_connected(__pointer, @__gamepad_connected_proc, nil)
       _window_set_gamepad_disconnected(__pointer, @__gamepad_disconnected_proc, nil)
       _window_set_drop(__pointer, @__drop_proc, nil)
@@ -110,8 +106,7 @@ module Gosu
     def draw; end
     def button_down(id); _window_default_button_down(__pointer, id); end
     def button_up(id); end
-    def axis_motion(id, value); end
-    def gamepad_connected(id, name); end
+    def gamepad_connected(id); end
     def gamepad_disconnected(id); end
     def drop(filename); end
     def needs_redraw?; true; end

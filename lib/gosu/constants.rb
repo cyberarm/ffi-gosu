@@ -1,8 +1,8 @@
 module Gosu
-  LIBRARY_PATH = File.expand_path("../../../gosu/cmake/build/libgosu.so", File.dirname(__FILE__))
+  LIBRARY_PATH = ["gosu", File.expand_path("../../../gosu/build/libgosu.so", File.dirname(__FILE__))]
 
   extend FFI::Library
-  ffi_lib "gosu", Gosu::LIBRARY_PATH
+  ffi_lib LIBRARY_PATH
 
   # uint32
   constants = [
@@ -230,50 +230,45 @@ module Gosu
     "GP_3_BUTTON_14",
     "GP_3_BUTTON_15",
 
-    "GP_AXIS_LEFT_X",
-    "GP_AXIS_LEFT_Y",
-    "GP_AXIS_RIGHT_X",
-    "GP_AXIS_RIGHT_Y",
-    "GP_AXIS_LEFT_TRIGGER",
-    "GP_AXIS_RIGHT_TRIGGER",
+    "GP_LEFT_STICK_X_AXIS",
+    "GP_LEFT_STICK_Y_AXIS",
+    "GP_RIGHT_STICK_X_AXIS",
+    "GP_RIGHT_STICK_Y_AXIS",
+    "GP_LEFT_TRIGGER_AXIS",
+    "GP_RIGHT_TRIGGER_AXIS",
 
-    "GP_0_AXIS_LEFT_X",
-    "GP_0_AXIS_LEFT_Y",
-    "GP_0_AXIS_RIGHT_X",
-    "GP_0_AXIS_RIGHT_Y",
-    "GP_0_AXIS_LEFT_TRIGGER",
-    "GP_0_AXIS_RIGHT_TRIGGER",
+    "GP_0_LEFT_STICK_X_AXIS",
+    "GP_0_LEFT_STICK_Y_AXIS",
+    "GP_0_RIGHT_STICK_X_AXIS",
+    "GP_0_RIGHT_STICK_Y_AXIS",
+    "GP_0_LEFT_TRIGGER_AXIS",
+    "GP_0_RIGHT_TRIGGER_AXIS",
 
-    "GP_1_AXIS_LEFT_X",
-    "GP_1_AXIS_LEFT_Y",
-    "GP_1_AXIS_RIGHT_X",
-    "GP_1_AXIS_RIGHT_Y",
-    "GP_1_AXIS_LEFT_TRIGGER",
-    "GP_1_AXIS_RIGHT_TRIGGER",
+    "GP_1_LEFT_STICK_X_AXIS",
+    "GP_1_LEFT_STICK_Y_AXIS",
+    "GP_1_RIGHT_STICK_X_AXIS",
+    "GP_1_RIGHT_STICK_Y_AXIS",
+    "GP_1_LEFT_TRIGGER_AXIS",
+    "GP_1_RIGHT_TRIGGER_AXIS",
 
-    "GP_2_AXIS_LEFT_X",
-    "GP_2_AXIS_LEFT_Y",
-    "GP_2_AXIS_RIGHT_X",
-    "GP_2_AXIS_RIGHT_Y",
-    "GP_2_AXIS_LEFT_TRIGGER",
-    "GP_2_AXIS_RIGHT_TRIGGER",
+    "GP_2_LEFT_STICK_X_AXIS",
+    "GP_2_LEFT_STICK_Y_AXIS",
+    "GP_2_RIGHT_STICK_X_AXIS",
+    "GP_2_RIGHT_STICK_Y_AXIS",
+    "GP_2_LEFT_TRIGGER_AXIS",
+    "GP_2_RIGHT_TRIGGER_AXIS",
 
-    "GP_3_AXIS_LEFT_X",
-    "GP_3_AXIS_LEFT_Y",
-    "GP_3_AXIS_RIGHT_X",
-    "GP_3_AXIS_RIGHT_Y",
-    "GP_3_AXIS_LEFT_TRIGGER",
-    "GP_3_AXIS_RIGHT_TRIGGER",
+    "GP_3_LEFT_STICK_X_AXIS",
+    "GP_3_LEFT_STICK_Y_AXIS",
+    "GP_3_RIGHT_STICK_X_AXIS",
+    "GP_3_RIGHT_STICK_Y_AXIS",
+    "GP_3_LEFT_TRIGGER_AXIS",
+    "GP_3_RIGHT_TRIGGER_AXIS",
     "GP_RANGE_END",
 
-    "NUM_BUTTONS",
+    "GP_NUM_BUTTONS_PER_GAMEPAD",
     "NUM_GAMEPADS",
     "NO_BUTTON",
-
-    "KB_NUM",
-    "MS_NUM",
-    "GP_NUM",
-    "GP_NUM_PER_GAMEPAD",
   ]
 
   constants = constants + [
