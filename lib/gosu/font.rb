@@ -47,8 +47,7 @@ module Gosu
     end
 
     def text_width(text, scale_x = 1)
-      # _font_text_width(__pointer, text.to_s) * scale_x
-      _font_markup_width(__pointer, text.to_s) * scale_x
+      _font_text_width(__pointer, text.to_s) * scale_x
     end
 
     def markup_width(text, scale_x = 1)
