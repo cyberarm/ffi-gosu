@@ -33,8 +33,8 @@ module Gosu
 
     BlobHelper = Struct.new(:columns, :rows, :to_blob)
 
-    def self.from_blob(width, height, rgba = "\0\0\0\0" * (width * height))
-      self.new(BlobHelper.new(width, height, rgba))
+    def self.from_blob(width, height, rgba = "\0\0\0\0" * (width * height), retro: false, tileable: false)
+      self.new(BlobHelper.new(width, height, rgba), retro: retro, tileable: tileable)
     end
 
     def self.from_text(markup, line_height, font: Gosu.default_font_name, width: -1, spacing: 0, align: :left,
@@ -81,7 +81,7 @@ module Gosu
         blob_bytes = object.to_blob { self.format = 'RGBA'; self.depth = 8 }.bytes
         FFI::MemoryPointer.new(:uchar, blob_bytes.size) do |blob|
           blob.write_array_of_type(:uchar, :put_uchar, blob_bytes)
-          __image = _create_image_from_blob(blob, blob_bytes.size, object.columns, object.rows, Gosu.image_flags(retro: retro))
+          __image = _create_image_from_blob(blob, blob_bytes.size, object.columns, object.rows, Gosu.image_flags(retro: retro, tileable: tileable))
         end
 
         raise "Failed to load image from blob" if __image.null?

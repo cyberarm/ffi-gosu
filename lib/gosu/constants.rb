@@ -6,7 +6,6 @@ module Gosu
 
   # uint32
   constants = [
-    "KB_RANGE_BEGIN",
     "KB_ESCAPE",
     "KB_F1",
     "KB_F2",
@@ -106,9 +105,7 @@ module Gosu
     "KB_NUMPAD_MINUS",
     "KB_NUMPAD_MULTIPLY",
     "KB_NUMPAD_DIVIDE",
-    "KB_RANGE_END",
 
-    "MS_RANGE_BEGIN",
     "MS_LEFT",
     "MS_MIDDLE",
     "MS_RIGHT",
@@ -122,9 +119,11 @@ module Gosu
     "MS_OTHER_5",
     "MS_OTHER_6",
     "MS_OTHER_7",
-    "MS_RANGE_END",
 
-    "GP_RANGE_BEGIN",
+    "GP_DPAD_LEFT",
+    "GP_DPAD_RIGHT",
+    "GP_DPAD_UP",
+    "GP_DPAD_DOWN",
     "GP_LEFT",
     "GP_RIGHT",
     "GP_UP",
@@ -146,6 +145,10 @@ module Gosu
     "GP_BUTTON_14",
     "GP_BUTTON_15",
 
+    "GP_0_DPAD_LEFT",
+    "GP_0_DPAD_RIGHT",
+    "GP_0_DPAD_UP",
+    "GP_0_DPAD_DOWN",
     "GP_0_LEFT",
     "GP_0_RIGHT",
     "GP_0_UP",
@@ -167,6 +170,10 @@ module Gosu
     "GP_0_BUTTON_14",
     "GP_0_BUTTON_15",
 
+    "GP_1_DPAD_LEFT",
+    "GP_1_DPAD_RIGHT",
+    "GP_1_DPAD_UP",
+    "GP_1_DPAD_DOWN",
     "GP_1_LEFT",
     "GP_1_RIGHT",
     "GP_1_UP",
@@ -188,6 +195,10 @@ module Gosu
     "GP_1_BUTTON_14",
     "GP_1_BUTTON_15",
 
+    "GP_2_DPAD_LEFT",
+    "GP_2_DPAD_RIGHT",
+    "GP_2_DPAD_UP",
+    "GP_2_DPAD_DOWN",
     "GP_2_LEFT",
     "GP_2_RIGHT",
     "GP_2_UP",
@@ -209,6 +220,10 @@ module Gosu
     "GP_2_BUTTON_14",
     "GP_2_BUTTON_15",
 
+    "GP_3_DPAD_LEFT",
+    "GP_3_DPAD_RIGHT",
+    "GP_3_DPAD_UP",
+    "GP_3_DPAD_DOWN",
     "GP_3_LEFT",
     "GP_3_RIGHT",
     "GP_3_UP",
@@ -264,11 +279,6 @@ module Gosu
     "GP_3_RIGHT_STICK_Y_AXIS",
     "GP_3_LEFT_TRIGGER_AXIS",
     "GP_3_RIGHT_TRIGGER_AXIS",
-    "GP_RANGE_END",
-
-    "GP_NUM_BUTTONS_PER_GAMEPAD",
-    "NUM_GAMEPADS",
-    "NO_BUTTON",
   ]
 
   constants = constants + [

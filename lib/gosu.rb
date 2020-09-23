@@ -90,8 +90,8 @@ module Gosu
     end
   end
 
-  def self.render(width, height, retro: false, &block)
-    Gosu::Image.new(_render(width, height, block, Gosu.image_flags(retro: retro)))
+  def self.render(width, height, retro: false, tileable: false, &block)
+    Gosu::Image.new(_render(width, height, block, Gosu.image_flags(retro: retro, tileable: tileable)))
   end
 
   def self.record(width, height, &block)
@@ -180,10 +180,10 @@ module Gosu
 
   # SEE: https://github.com/gosu/gosu/blob/master/Gosu/GraphicsBase.hpp
   def self.image_flags(retro: false, tileable: false)
-    flags = 0x0
+    flags = 0
 
+    flags = 30 if tileable
     flags |= 1 << 5 if retro
-    flags |= 1 << 8 if tileable
 
     return flags
   end
