@@ -30,7 +30,7 @@ jobs:
         cmake ..
         sed -i 's@set(CMAKE_INSTALL_PREFIX "/usr/local")@set(CMAKE_INSTALL_PREFIX "/usr")@g' cmake_install.cmake
         make
-        make install
+        sudo make install
         cd ..
 
         cd ../ffi-gosu
