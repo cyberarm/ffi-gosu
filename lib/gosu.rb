@@ -126,12 +126,12 @@ module Gosu
 
   def self.button_name(id)
     name = _button_name(id)
-    name.empty? ? nil : name
+    name&.empty? ? nil : name
   end
 
   def self.gamepad_name(id)
     name = _gamepad_name(id)
-    name.empty? ? nil : name
+    name&.empty? ? nil : name
   end
 
   def self.draw_line(x1, y1, c1, x2, y2, c2, z = 0, mode = :default)

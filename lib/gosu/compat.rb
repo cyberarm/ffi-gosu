@@ -16,13 +16,13 @@ module Gosu
   class Window
     # Compat code taken from gosu/gosu
 
-    %w(update draw needs_redraw? needs_cursor?
+    %w(update draw needs_redraw? needs_cursor? capture_cursor? hit_test
       lose_focus button_down button_up gamepad_connected gamepad_disconnected drop close).each do |callback|
       define_method "protected_#{callback}" do |*args|
         begin
           # If there has been an exception, don't do anything as to not make matters worse.
           # Conveniently turn the return value into a boolean result (for needs_cursor? etc).
-          defined?(@__exception) ? false : !!send(callback, *args)
+          defined?(@__exception) ? false : send(callback, *args)
         rescue Exception => e
           # Exit the message loop naturally, then re-throw during the next tick.
           @__exception = e
