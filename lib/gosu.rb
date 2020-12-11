@@ -148,7 +148,7 @@ module Gosu
 
   def self.draw_triangle(x1, y1, c1, x2, y2, c2, x3, y3, c3, z = 0, mode = :default)
     _draw_triangle(x1, y1, color_to_drawop(c1), x2, y2, color_to_drawop(c2),
-               x3, y3, color_to_drawop(c3), z, Gosu.blendmode(mode))
+                   x3, y3, color_to_drawop(c3), z, Gosu.blendmode(mode))
   end
 
   def self.draw_rect(x, y, width, height, c, z = 0, mode = :default)
@@ -178,6 +178,15 @@ module Gosu
     color.is_a?(Gosu::Color) ? color.gl : color
   end
 
+  def self.window_flags(fullscreen: false, resizable: false, borderless: false)
+    flags = 0
+    flags |= 1 if fullscreen
+    flags |= 2 if resizable
+    flags |= 4 if borderless
+
+    flags
+  end
+
   # SEE: https://github.com/gosu/gosu/blob/master/Gosu/GraphicsBase.hpp
   def self.image_flags(retro: false, tileable: false)
     flags = 0
@@ -185,7 +194,7 @@ module Gosu
     flags = 30 if tileable
     flags |= 1 << 5 if retro
 
-    return flags
+    flags
   end
 
   def self.font_flags(bold, italic, underline)
@@ -194,7 +203,7 @@ module Gosu
     flags |= 2 if italic
     flags |= 4 if underline
 
-    return flags
+    flags
   end
 
   def self.font_alignment_flags(mode)
@@ -209,6 +218,7 @@ module Gosu
       3
     else
       return mode if mode.is_a?(Numeric)
+
       raise ArgumentError, "No such mode: #{mode}"
     end
   end
@@ -223,6 +233,7 @@ module Gosu
       2
     else
       return mode if mode.is_a?(Numeric)
+
       raise ArgumentError, "No such mode: #{mode}"
     end
   end

@@ -9,8 +9,8 @@ module Gosu
     callback :_callback_returns_bool,                  [:pointer],             :bool
     callback :_callback_hit_test_returns_unsigned,     [:pointer, :int, :int], :uint32
 
-    attach_function :_create_window,  :Gosu_Window_create,  [:int, :int, :bool, :double, :bool, :bool], :pointer
-    attach_function :_destroy_window, :Gosu_Window_destroy, [:pointer],                                 :void
+    attach_function :_create_window,  :Gosu_Window_create,  [:int, :int, :uint32, :double], :pointer
+    attach_function :_destroy_window, :Gosu_Window_destroy, [:pointer],                     :void
 
     attach_function :_window_set_draw,                 :Gosu_Window_set_draw,                 [:pointer, :_callback, :pointer],                           :void
     attach_function :_window_set_update,               :Gosu_Window_set_update,               [:pointer, :_callback, :pointer],                           :void
@@ -49,6 +49,10 @@ module Gosu
     attach_function :_window_resize,              :Gosu_Window_resize,              [:pointer, :int, :int, :bool], :void
     attach_function :_window_is_fullscreen,       :Gosu_Window_is_fullscreen,       [:pointer],                    :bool
     attach_function :_window_is_resizable,        :Gosu_Window_is_resizable,        [:pointer],                    :bool
+    attach_function :_window_is_borderless,       :Gosu_Window_is_borderless,       [:pointer],                    :bool
+    # attach_function :_window_set_fullscreen,      :Gosu_Window_set_fullscreen,      [:pointer, :bool],             :void
+    attach_function :_window_set_resizable,       :Gosu_Window_set_resizable,       [:pointer, :bool],             :void
+    attach_function :_window_set_borderless,      :Gosu_Window_set_borderless,      [:pointer, :bool],             :void
 
     attach_function :_window_text_input,          :Gosu_Window_text_input,          [:pointer],                    :pointer
     attach_function :_window_set_text_input,      :Gosu_Window_set_text_input,      [:pointer, :pointer],          :void
@@ -61,7 +65,9 @@ module Gosu
       resizable = _resizable if _resizable
       borderless = _borderless if _borderless
 
-      __window = _create_window(width, height, fullscreen, update_interval, resizable, borderless)
+      window_flags = Gosu.window_flags(fullscreen: fullscreen, resizable: resizable, borderless: borderless)
+
+      __window = _create_window(width, height, window_flags, update_interval)
       @memory_pointer = FFI::AutoPointer.new(__window, Gosu::Window.method(:release))
       @text_input = nil
 
@@ -103,18 +109,47 @@ module Gosu
       $gosu_gl_blocks.clear
     end
 
-    def update; end
-    def draw; end
-    def button_down(id); _window_default_button_down(__pointer, id); end
-    def button_up(id); end
-    def gamepad_connected(id); end
-    def gamepad_disconnected(id); end
-    def drop(filename); end
-    def needs_redraw?; true; end
-    def needs_cursor?; false; end
-    def capture_cursor?; false; end
-    def hit_test(x, y); 0; end
-    def close; close!; end
+    def update
+    end
+
+    def draw
+    end
+
+    def button_down(id)
+      _window_default_button_down(__pointer, id)
+    end
+
+    def button_up(id)
+    end
+
+    def gamepad_connected(id)
+    end
+
+    def gamepad_disconnected(id)
+    end
+
+    def drop(filename)
+    end
+
+    def needs_redraw?
+      true
+    end
+
+    def needs_cursor?
+      false
+    end
+
+    def capture_cursor?
+      false
+    end
+
+    def hit_test(x, y)
+      0
+    end
+
+    def close
+      close!
+    end
 
     def caption
       _window_caption(__pointer)
@@ -129,20 +164,32 @@ module Gosu
     end
 
     def fullscreen=(boolean)
-      raise ArgumentError "Expected boolean" unless boolean.is_a?(TrueClass) || boolean.is_a?(FalseClass)
-      _window_resize(__pointer, self.width, self.height, boolean)
+      _window_resize(__pointer, width, height, !!boolean)
     end
 
     def resizable?
       _window_is_resizable(__pointer)
     end
 
+    def resizable=(boolean)
+      _window_set_resizable(__pointer, !!boolean)
+    end
+
+    def borderless?
+      _window_is_borderless(__pointer)
+    end
+
+    def borderless=(boolean)
+      _window_set_borderless(__pointer, !!boolean)
+    end
+
     def text_input
-      @text_input ? @text_input : nil
+      @text_input || nil
     end
 
     def text_input=(text_input)
-      raise ArgumentError, "text_input must be a Gosu::TextInput" unless text_input.is_a?(Gosu::TextInput) || text_input == nil
+      raise ArgumentError, "text_input must be a Gosu::TextInput" unless text_input.is_a?(Gosu::TextInput) || text_input.nil?
+
       ptr = text_input ? text_input.__pointer : nil
       @text_input = text_input
 
@@ -197,9 +244,7 @@ module Gosu
     def show
       _window_show(__pointer)
 
-      if defined?(@__exception)
-        raise @__exception
-      end
+      raise @__exception if defined?(@__exception)
     end
 
     def tick
