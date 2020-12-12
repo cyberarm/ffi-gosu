@@ -54,6 +54,10 @@ module Gosu
     attach_function :_window_set_resizable,       :Gosu_Window_set_resizable,       [:pointer, :bool],             :void
     attach_function :_window_set_borderless,      :Gosu_Window_set_borderless,      [:pointer, :bool],             :void
 
+    attach_function :_window_minimize,            :Gosu_Window_minimize,            [:pointer],                    :void
+    attach_function :_window_restore,             :Gosu_Window_restore,             [:pointer],                    :void
+    attach_function :_window_maximize,            :Gosu_Window_maximize,            [:pointer],                    :void
+
     attach_function :_window_text_input,          :Gosu_Window_text_input,          [:pointer],                    :pointer
     attach_function :_window_set_text_input,      :Gosu_Window_set_text_input,      [:pointer, :pointer],          :void
 
@@ -249,6 +253,18 @@ module Gosu
 
     def tick
       _window_tick(__pointer)
+    end
+
+    def minimize
+      _window_minimize(__pointer)
+    end
+
+    def restore
+      _window_restore(__pointer)
+    end
+
+    def maximize
+      _window_maximize(__pointer)
     end
 
     def close!
