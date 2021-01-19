@@ -9,14 +9,14 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - name: Set up Ruby 2.6
-      uses: actions/setup-ruby@v1
+    - name: Set up Ruby 3.0
+      uses: ruby/setup-ruby@v1
       with:
-        ruby-version: 2.6.x
+        ruby-version: 3.0.0
     - name: Install Gosu dependencies
       run: |
         sudo apt-get update -y -qq
-        sudo apt-get install -y libsdl2-dev libgl1-mesa-dev libfontconfig1-dev libopenal-dev libsndfile1-dev libmpg123-dev cmake xvfb pulseaudio
+        sudo apt-get install -y build-essential libsdl2-dev libgl1-mesa-dev libopenal-dev libgmp-dev libfontconfig1-dev cmake xvfb pulseaudio
     - name: Install Gosu
       run: |
         echo $PWD
@@ -24,7 +24,7 @@ jobs:
         git clone --depth=1 --single-branch --branch master https://github.com/gosu/gosu
         cd gosu
 
-        sed -i 's/^cmake_policy/# &/' cmake/GosuConfig.cmake
+        # sed -i 's/^cmake_policy/# &/' cmake/GosuConfig.cmake
         mkdir -p build
         cd build
         cmake ..
