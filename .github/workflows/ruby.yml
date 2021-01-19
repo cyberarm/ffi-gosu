@@ -2,6 +2,9 @@ name: Ruby CI
 
 on: [push, pull_request]
 
+env:
+  GOSU_GIT_BRANCH: window-tweaks # switch to master after window-tweaks is merged
+
 jobs:
   linux:
     runs-on: ubuntu-latest
@@ -16,12 +19,11 @@ jobs:
       run: |
         sudo apt-get update -y -qq
         sudo apt-get install -y build-essential libsdl2-dev libgl1-mesa-dev libopenal-dev libgmp-dev libfontconfig1-dev cmake xvfb pulseaudio
-    - name: Install Gosu
+    - name: Build and install Gosu
       run: |
         echo $PWD
         cd ..
-        # TEMP: switch to master branch after window-tweaks is merged
-        git clone --depth=1 --single-branch --branch window-tweaks https://github.com/gosu/gosu
+        git clone --depth=1 --single-branch --branch ${{ env.GOSU_GIT_BRANCH }} https://github.com/gosu/gosu
         cd gosu
 
         # sed -i 's/^cmake_policy/# &/' cmake/GosuConfig.cmake
@@ -34,7 +36,7 @@ jobs:
         cd ..
 
         cd ../ffi-gosu
-    - name: Build and test with Rake
+    - name: Test with rake
       run: |
         gem install bundler
         bundle install --jobs 4 --retry 3
@@ -54,20 +56,20 @@ jobs:
       uses: ruby/setup-ruby@v1
       with:
         ruby-version: 3.0.0
-    - name: Install Gosu
+    - name: Add msbuild to PATH
       uses: microsoft/setup-msbuild@v1.0.2
+    - name: Build Gosu with msbuild
       run: |
         echo $PWD
         cd ..
-        # TEMP: switch to master branch after window-tweaks is merged
-        git clone --depth=1 --single-branch --branch window-tweaks https://github.com/gosu/gosu
+        git clone --depth=1 --single-branch --branch ${{ env.GOSU_GIT_BRANCH }} https://github.com/gosu/gosu
         cd gosu
 
-        msbuild windows/Gosu.sln
+        msbuild windows/Gosu.sln /property:Configuration=Release
         cd ..
 
         cd ../ffi-gosu
-    - name: Build and test with Rake
+    - name: Test with rake
       run: |
         gem install bundler
         bundle install --jobs 4 --retry 3

@@ -1,5 +1,9 @@
 module Gosu
-  LIBRARY_PATH = [File.expand_path("../../../gosu/build/ffi/libgosu-ffi.so", __dir__), "gosu-ffi"]
+  LIBRARY_PATH = [
+    File.expand_path("../../../gosu/build/ffi/libgosu-ffi.so", __dir__),
+    File.expand_path("../../../gosu/lib64/gosu-ffi.dll", __dir__).gsub("/", "\\"),
+    "gosu-ffi"
+  ]
 
   extend FFI::Library
   ffi_lib LIBRARY_PATH
