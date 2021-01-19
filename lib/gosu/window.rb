@@ -21,8 +21,8 @@ module Gosu
     attach_function :_window_set_drop,                 :Gosu_Window_set_drop,                 [:pointer, :_callback_with_string, :pointer],               :void
     attach_function :_window_set_needs_redraw,         :Gosu_Window_set_needs_redraw,         [:pointer, :_callback_returns_bool, :pointer],              :void
     attach_function :_window_set_needs_cursor,         :Gosu_Window_set_needs_cursor,         [:pointer, :_callback_returns_bool, :pointer],              :void
-    attach_function :_window_set_capture_cursor,       :Gosu_Window_set_capture_cursor,       [:pointer, :_callback_returns_bool, :pointer],              :void
-    attach_function :_window_set_hit_test,             :Gosu_Window_set_hit_test,             [:pointer, :_callback_hit_test_returns_unsigned, :pointer], :void
+    #attach_function :_window_set_capture_cursor,       :Gosu_Window_set_capture_cursor,       [:pointer, :_callback_returns_bool, :pointer],              :void
+    #attach_function :_window_set_hit_test,             :Gosu_Window_set_hit_test,             [:pointer, :_callback_hit_test_returns_unsigned, :pointer], :void
     attach_function :_window_set_close,                :Gosu_Window_set_close,                [:pointer, :_callback, :pointer],                           :void
 
     # Enable gosu's default button_down fullscreen toggle
@@ -54,9 +54,9 @@ module Gosu
     attach_function :_window_set_resizable,       :Gosu_Window_set_resizable,       [:pointer, :bool],             :void
     attach_function :_window_set_borderless,      :Gosu_Window_set_borderless,      [:pointer, :bool],             :void
 
-    attach_function :_window_minimize,            :Gosu_Window_minimize,            [:pointer],                    :void
-    attach_function :_window_restore,             :Gosu_Window_restore,             [:pointer],                    :void
-    attach_function :_window_maximize,            :Gosu_Window_maximize,            [:pointer],                    :void
+    #attach_function :_window_minimize,            :Gosu_Window_minimize,            [:pointer],                    :void
+    #attach_function :_window_restore,             :Gosu_Window_restore,             [:pointer],                    :void
+    #attach_function :_window_maximize,            :Gosu_Window_maximize,            [:pointer],                    :void
 
     attach_function :_window_text_input,          :Gosu_Window_text_input,          [:pointer],                    :pointer
     attach_function :_window_set_text_input,      :Gosu_Window_set_text_input,      [:pointer, :pointer],          :void
@@ -97,8 +97,8 @@ module Gosu
       _window_set_drop(__pointer, @__drop_proc, nil)
       _window_set_needs_redraw(__pointer, @__needs_redraw_proc, nil)
       _window_set_needs_cursor(__pointer, @__needs_cursor_proc, nil)
-      _window_set_capture_cursor(__pointer, @__capture_cursor_proc, nil)
-      _window_set_hit_test(__pointer, @__hit_test_proc, nil)
+      #_window_set_capture_cursor(__pointer, @__capture_cursor_proc, nil)
+      #_window_set_hit_test(__pointer, @__hit_test_proc, nil)
       _window_set_close(__pointer, @__close_proc, nil)
     end
 
