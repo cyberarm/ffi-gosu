@@ -43,3 +43,32 @@ jobs:
         sudo usermod -a -G audio $USER
 
         xvfb-run bundle exec rake
+
+  build:
+
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Ruby 3.0
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: 3.0.0
+    - name: Install Gosu
+      run: |
+        echo $PWD
+        cd ..
+        # TEMP: switch to master branch after window-tweaks is merged
+        git clone --depth=1 --single-branch --branch window-tweaks https://github.com/gosu/gosu
+        cd gosu
+
+        msbuild windows/Gosu.sln
+        cd ..
+
+        cd ../ffi-gosu
+    - name: Build and test with Rake
+      run: |
+        gem install bundler
+        bundle install --jobs 4 --retry 3
+
+        bundle exec rake
