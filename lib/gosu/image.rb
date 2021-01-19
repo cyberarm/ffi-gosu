@@ -39,7 +39,7 @@ module Gosu
 
     def self.from_text(markup, line_height, font: Gosu.default_font_name, width: -1, spacing: 0, align: :left,
                        bold: false, italic: false, underline: false, retro: false)
-      Gosu::Image.new( _create_image_from_markup(markup, font, line_height, width, spacing,
+      Gosu::Image.new( _create_image_from_text(markup, font, line_height, width, spacing,
                       Gosu.font_alignment_flags(align), Gosu.font_flags(bold, italic, underline), Gosu.image_flags(retro: retro)) )
     end
 
