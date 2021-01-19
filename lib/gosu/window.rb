@@ -50,7 +50,7 @@ module Gosu
     attach_function :_window_is_fullscreen,       :Gosu_Window_is_fullscreen,       [:pointer],                    :bool
     attach_function :_window_is_resizable,        :Gosu_Window_is_resizable,        [:pointer],                    :bool
     attach_function :_window_is_borderless,       :Gosu_Window_is_borderless,       [:pointer],                    :bool
-    # attach_function :_window_set_fullscreen,      :Gosu_Window_set_fullscreen,      [:pointer, :bool],             :void
+    attach_function :_window_set_fullscreen,      :Gosu_Window_set_fullscreen,      [:pointer, :bool],             :void
     attach_function :_window_set_resizable,       :Gosu_Window_set_resizable,       [:pointer, :bool],             :void
     attach_function :_window_set_borderless,      :Gosu_Window_set_borderless,      [:pointer, :bool],             :void
 

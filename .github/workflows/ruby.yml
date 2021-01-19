@@ -21,7 +21,8 @@ jobs:
       run: |
         echo $PWD
         cd ..
-        git clone --depth=1 --single-branch --branch master https://github.com/gosu/gosu
+        # TEMP: switch to master branch after window-tweaks is merged
+        git clone --depth=1 --single-branch --branch window-tweaks https://github.com/gosu/gosu
         cd gosu
 
         # sed -i 's/^cmake_policy/# &/' cmake/GosuConfig.cmake
