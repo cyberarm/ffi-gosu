@@ -3,7 +3,6 @@ module Gosu
     extend FFI::Library
     ffi_lib Gosu::LIBRARY_PATH
 
-    attach_function :_create_channel,  :Gosu_Channel_create,   [:pointer], :pointer
     attach_function :_destroy_channel, :Gosu_Channel_destroy,  [:pointer], :void
 
     attach_function :_channel_playing, :Gosu_Channel_playing, [:pointer], :bool
