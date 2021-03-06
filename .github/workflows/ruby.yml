@@ -3,7 +3,7 @@ name: Ruby CI
 on: [push, pull_request]
 
 env:
-  GOSU_GIT_BRANCH: window-tweaks # switch to master after window-tweaks is merged
+  GOSU_GIT_BRANCH: master
 
 jobs:
   linux:
@@ -26,11 +26,9 @@ jobs:
         git clone --depth=1 --single-branch --branch ${{ env.GOSU_GIT_BRANCH }} https://github.com/gosu/gosu
         cd gosu
 
-        # sed -i 's/^cmake_policy/# &/' cmake/GosuConfig.cmake
         mkdir -p build
         cd build
-        cmake ..
-        sed -i 's@set(CMAKE_INSTALL_PREFIX "/usr/local")@set(CMAKE_INSTALL_PREFIX "/usr")@g' cmake_install.cmake
+        cmake -D CMAKE_INSTALL_PREFIX:PATH=/usr ..
         make
         sudo make install
         cd ..
@@ -44,8 +42,6 @@ jobs:
         sudo usermod -a -G audio $USER
 
         xvfb-run bundle exec rake
-
-
 
   windows:
     runs-on: windows-latest

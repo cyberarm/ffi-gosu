@@ -23,7 +23,9 @@ end
 module Gosu
   LIBRARY_PATH = [
     File.expand_path("../../../gosu/build/ffi/libgosu-ffi.so", __dir__),
-	"gosu-ffi"
+    "/usr/local/lib/libgosu-ffi.dylib", # Homebrew on macOS (Intel) or manual installation
+    "/opt/homebrew/lib/libgosu-ffi.dylib", # Homebrew on macOS (Apple Silicon)
+    "gosu-ffi"
   ]
 
   extend FFI::Library

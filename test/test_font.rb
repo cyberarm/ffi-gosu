@@ -28,7 +28,6 @@ class TestFont < Minitest::Test
     refute_equal bold_font.text_width("Afdslkgjd"), regular_font.text_width("Afdslkgjd")
     assert_equal bold_font.text_width("Afdslkgjd"), regular_font.markup_width("<b>Afdslkgjd</b>")
     assert_equal bold_font.markup_width("<b>Afdslkgjd"), bold_font.text_width("Afdslkgjd")
-    assert_equal bold_font.markup_width("</b>Afdslkgjd"), bold_font.text_width("Afdslkgjd")
   end
 
   def test_draw_and_draw_rel
