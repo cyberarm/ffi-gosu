@@ -144,7 +144,7 @@ module Gosu
   end
 
   def self.draw_line(x1, y1, c1, x2, y2, c2, z = 0, mode = :default)
-    _draw_line(x1, y1, color_to_drawop(c1), x2, y2, color_to_drawop(c2), z, Gosu.blendmode(mode))
+    _draw_line(x1, y1, color_to_drawop(c1), x2, y2, color_to_drawop(c2), z, Gosu.blend_mode(mode))
   end
 
   def self.draw_quad(x1, y1, c1, x2, y2, c2,
@@ -152,16 +152,16 @@ module Gosu
                      z = 0, mode = :default)
     _draw_quad(x1, y1, color_to_drawop(c1), x2, y2, color_to_drawop(c2),
                x3, y3, color_to_drawop(c3), x4, y4, color_to_drawop(c4),
-               z, Gosu.blendmode(mode))
+               z, Gosu.blend_mode(mode))
   end
 
   def self.draw_triangle(x1, y1, c1, x2, y2, c2, x3, y3, c3, z = 0, mode = :default)
     _draw_triangle(x1, y1, color_to_drawop(c1), x2, y2, color_to_drawop(c2),
-                   x3, y3, color_to_drawop(c3), z, Gosu.blendmode(mode))
+                   x3, y3, color_to_drawop(c3), z, Gosu.blend_mode(mode))
   end
 
   def self.draw_rect(x, y, width, height, c, z = 0, mode = :default)
-    _draw_rect(x, y, width, height, color_to_drawop(c), z, Gosu.blendmode(mode))
+    _draw_rect(x, y, width, height, color_to_drawop(c), z, Gosu.blend_mode(mode))
   end
 
   def self.available_width(window = nil)
@@ -215,8 +215,8 @@ module Gosu
     flags
   end
 
-  def self.font_alignment_flags(mode)
-    case mode
+  def self.font_alignment_flags(flags)
+    case flags
     when :left
       0
     when :right
@@ -226,13 +226,13 @@ module Gosu
     when :justify
       3
     else
-      return mode if mode.is_a?(Numeric)
+      return flags if flags.is_a?(Numeric)
 
-      raise ArgumentError, "No such mode: #{mode}"
+      raise ArgumentError, "No such font alignment: #{flags}"
     end
   end
 
-  def self.blendmode(mode)
+  def self.blend_mode(mode)
     case mode
     when :default
       0
@@ -243,7 +243,7 @@ module Gosu
     else
       return mode if mode.is_a?(Numeric)
 
-      raise ArgumentError, "No such mode: #{mode}"
+      raise ArgumentError, "No such blend mode: #{mode}"
     end
   end
 end

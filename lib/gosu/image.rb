@@ -108,17 +108,17 @@ module Gosu
     end
 
     def draw(x, y, z, scale_x = 1, scale_y = 1, color = Gosu::Color::WHITE, flags = :default)
-      _image_draw(__pointer, x, y, z, scale_x, scale_y, Gosu.color_to_drawop(color), Gosu.blendmode(flags))
+      _image_draw(__pointer, x, y, z, scale_x, scale_y, Gosu.color_to_drawop(color), Gosu.blend_mode(flags))
     end
 
     def draw_rot(x, y, z, angle, center_x = 0.5, center_y = 0.5, scale_x = 1, scale_y = 1, color = Gosu::Color::WHITE, flags = :default)
-      _image_draw_rot(__pointer, x, y, z, angle, center_x, center_y, scale_x, scale_y, Gosu.color_to_drawop(color), Gosu.blendmode(flags))
+      _image_draw_rot(__pointer, x, y, z, angle, center_x, center_y, scale_x, scale_y, Gosu.color_to_drawop(color), Gosu.blend_mode(flags))
     end
 
     def draw_as_quad(x1, y1, color1, x2, y2, color2, x3, y3, color3, x4, y4, color4, z = 0, mode = :default)
       _image_draw_as_quad(x1, y1, Gosu.color_to_drawop(color1), x2, y2, Gosu.color_to_drawop(color2),
                           x3, y3, Gosu.color_to_drawop(color3), x4, y4, Gosu.color_to_drawop(color4),
-                          z, Gosu.blendmode(mode))
+                          z, Gosu.blend_mode(mode))
     end
 
     def save(filename)
