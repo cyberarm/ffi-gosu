@@ -22,8 +22,9 @@ module Gosu
   extend FFI::Library
   ffi_lib Gosu::LIBRARY_PATH
 
-  callback :_callback,            [],         :void
-  callback :_callback_with_block, [:pointer], :void
+  callback :_callback,             [],         :void
+  callback :_callback_with_block,  [:pointer], :void
+  callback :_callback_with_string, [:string],  :void
 
   # Argumentless functions that don't need nice pretty argument handling
   attach_function :fps,            :Gosu_fps,                    [], :int
@@ -31,7 +32,7 @@ module Gosu
   attach_function :milliseconds,   :Gosu_milliseconds,           [], :long
   attach_function :default_font_name, :Gosu_default_font_name, [], :string
 
-  attach_function :_user_languages, :Gosu_get_user_languages, [:_callback_with_block, :pointer], :void
+  attach_function :_user_languages, :Gosu_user_languages, [:_callback_with_string, :pointer], :void
 
   attach_function :_transform, :Gosu_transform, [:double, :double, :double, :double, :double, :double, :double, :double,
                                                  :double, :double, :double, :double, :double, :double, :double, :double,
@@ -73,18 +74,11 @@ module Gosu
   attach_function :_available_width,  :Gosu_available_width,  [:pointer], :uint32
   attach_function :_available_height, :Gosu_available_height, [:pointer], :uint32
 
-  def self.language
-    @language_cache ||= (user_languages&.first || "en_US")
-  end
-
   def self.user_languages
     languages = []
     callback = proc { |data, string| languages << string if string }
     _user_languages(callback, nil)
-
-    return languages if languages.size.positive?
-
-    nil
+    languages
   end
 
   def self.gl(z = nil, &block)
