@@ -313,10 +313,10 @@ module Gosu
   ]
 
   constants = constants + [
-    "AM_DEFAULT",
-    "AM_INTERPOLATE",
-    "AM_ADD",
-    "AM_MULTIPLY",
+    "BM_DEFAULT",
+    "BM_INTERPOLATE",
+    "BM_ADD",
+    "BM_MULTIPLY",
 
     "FF_BOLD",
     "FF_ITALIC",
