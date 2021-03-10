@@ -22,9 +22,8 @@ module Gosu
   extend FFI::Library
   ffi_lib Gosu::LIBRARY_PATH
 
-  callback :_callback,             [],         :void
-  callback :_callback_with_block,  [:pointer], :void
-  callback :_callback_with_string, [:string],  :void
+  callback :_callback,             [:pointer],          :void
+  callback :_callback_with_string, [:pointer, :string], :void
 
   # Argumentless functions that don't need nice pretty argument handling
   attach_function :fps,            :Gosu_fps,                    [], :int
@@ -36,17 +35,17 @@ module Gosu
 
   attach_function :_transform, :Gosu_transform, [:double, :double, :double, :double, :double, :double, :double, :double,
                                                  :double, :double, :double, :double, :double, :double, :double, :double,
-                                                 :_callback_with_block
+                                                 :_callback
                                                 ], :void
-  attach_function :_translate, :Gosu_translate, [:double, :double, :_callback_with_block], :void
-  attach_function :_rotate,    :Gosu_rotate,    [:double, :double, :double, :_callback_with_block], :void
-  attach_function :_scale,     :Gosu_scale,     [:double, :double, :double, :double, :_callback_with_block], :void
-  attach_function :_clip_to,   :Gosu_clip_to,   [:double, :double, :double, :double, :_callback_with_block], :void
+  attach_function :_translate, :Gosu_translate, [:double, :double, :_callback], :void
+  attach_function :_rotate,    :Gosu_rotate,    [:double, :double, :double, :_callback], :void
+  attach_function :_scale,     :Gosu_scale,     [:double, :double, :double, :double, :_callback], :void
+  attach_function :_clip_to,   :Gosu_clip_to,   [:double, :double, :double, :double, :_callback], :void
 
-  attach_function :_gl_z,    :Gosu_gl_z,  [:double, :_callback],                        :void
-  attach_function :_gl,      :Gosu_gl,    [:_callback],                                 :void
-  attach_function :_render, :Gosu_render, [:int, :int, :_callback_with_block, :uint32], :pointer
-  attach_function :_record, :Gosu_record, [:int, :int, :_callback_with_block],          :pointer
+  attach_function :_gl_z,    :Gosu_gl_z,  [:double, :_callback],             :void
+  attach_function :_gl,      :Gosu_gl,    [:_callback],                      :void
+  attach_function :_render, :Gosu_render, [:int, :int, :_callback, :uint32], :pointer
+  attach_function :_record, :Gosu_record, [:int, :int, :_callback],          :pointer
 
   attach_function :_button_down, :Gosu_button_down,            [:uint32], :bool
   attach_function :axis,        :Gosu_axis,                    [:uint32], :double

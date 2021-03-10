@@ -3,7 +3,7 @@ module Gosu
     extend FFI::Library
     ffi_lib Gosu::LIBRARY_PATH
 
-    callback :_callback_for_tiles, [:pointer, :pointer], :void
+    callback :_callback_with_image, [:pointer, :pointer], :void
 
     attach_function :_create_image,      :Gosu_Image_create,     [:string, :uint32], :pointer
     attach_function :_destroy_image,     :Gosu_Image_destroy,    [:pointer],         :void
@@ -12,8 +12,8 @@ module Gosu
     attach_function :_create_image_from_text,      :Gosu_Image_create_from_text,         [:string, :string, :double, :int, :double, :uint32, :uint32, :uint32], :pointer
     attach_function :_create_image_from_blob,      :Gosu_Image_create_from_blob,         [:pointer, :ulong, :int, :int, :uint32],                               :pointer
     attach_function :_image_subimage,              :Gosu_Image_create_from_subimage,     [:pointer, :int, :int, :int, :int],                                    :pointer
-    attach_function :_image_load_tiles,            :Gosu_Image_create_from_tiles,        [:string,  :int, :int, :_callback_for_tiles, :pointer, :uint32],       :void
-    attach_function :_image_load_tiles_from_image, :Gosu_Image_create_tiles_from_image,  [:pointer, :int, :int, :_callback_for_tiles, :pointer, :uint32],       :void
+    attach_function :_image_load_tiles,            :Gosu_Image_create_from_tiles,        [:string,  :int, :int, :_callback_with_image, :pointer, :uint32],      :void
+    attach_function :_image_load_tiles_from_image, :Gosu_Image_create_tiles_from_image,  [:pointer, :int, :int, :_callback_with_image, :pointer, :uint32],      :void
 
     attach_function :_image_width,       :Gosu_Image_width,      [:pointer], :int
     attach_function :_image_height,      :Gosu_Image_height,     [:pointer], :int

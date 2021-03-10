@@ -3,7 +3,7 @@ module Gosu
     extend FFI::Library
     ffi_lib Gosu::LIBRARY_PATH
 
-    callback :_callback_filter, [:pointer, :string], :void
+    callback :_callback_with_string, [:pointer, :string], :void
 
     attach_function :_create_textinput,   :Gosu_TextInput_create,   [],         :pointer
     attach_function :_destroy_textinput,  :Gosu_TextInput_destroy,  [:pointer], :void
@@ -13,10 +13,10 @@ module Gosu
     attach_function :_textinput_selection_start,      :Gosu_TextInput_selection_start,     [:pointer],          :uint32
     attach_function :_textinput_set_selection_start,  :Gosu_TextInput_set_selection_start, [:pointer, :uint32], :void
 
-    attach_function :_textinput_text,              :Gosu_TextInput_text,              [:pointer],                              :string
-    attach_function :_textinput_set_text,          :Gosu_TextInput_set_text,          [:pointer, :string],                     :void
-    attach_function :_textinput_set_filter,        :Gosu_TextInput_set_filter,        [:pointer, :_callback_filter, :pointer], :void
-    attach_function :_textinput_set_filter_result, :Gosu_TextInput_set_filter_result, [:pointer, :string],                     :void
+    attach_function :_textinput_text,              :Gosu_TextInput_text,              [:pointer],                                   :string
+    attach_function :_textinput_set_text,          :Gosu_TextInput_set_text,          [:pointer, :string],                          :void
+    attach_function :_textinput_set_filter,        :Gosu_TextInput_set_filter,        [:pointer, :_callback_with_string, :pointer], :void
+    attach_function :_textinput_set_filter_result, :Gosu_TextInput_set_filter_result, [:pointer, :string],                          :void
 
     attach_function :_textinput_delete_backward, :Gosu_TextInput_delete_backward, [:pointer], :void
     attach_function :_textinput_delete_forward,  :Gosu_TextInput_delete_forward,  [:pointer], :void
