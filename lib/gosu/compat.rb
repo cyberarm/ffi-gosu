@@ -13,6 +13,10 @@ module Gosu
     Gosu.const_set old_name, Gosu.const_get(new_name)
   end
 
+  def self.language
+    @language_cache ||= (user_languages.first || "en_US")
+  end
+
   class Window
     # Compat code taken from gosu/gosu
 

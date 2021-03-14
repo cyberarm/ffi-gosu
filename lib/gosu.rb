@@ -22,8 +22,8 @@ module Gosu
   extend FFI::Library
   ffi_lib Gosu::LIBRARY_PATH
 
-  callback :_callback,            [],         :void
-  callback :_callback_with_block, [:pointer], :void
+  callback :_callback,             [:pointer],          :void
+  callback :_callback_with_string, [:pointer, :string], :void
 
   # Argumentless functions that don't need nice pretty argument handling
   attach_function :fps,            :Gosu_fps,                    [], :int
@@ -31,21 +31,21 @@ module Gosu
   attach_function :milliseconds,   :Gosu_milliseconds,           [], :long
   attach_function :default_font_name, :Gosu_default_font_name, [], :string
 
-  attach_function :_user_languages, :Gosu_get_user_languages, [:_callback_with_block, :pointer], :void
+  attach_function :_user_languages, :Gosu_user_languages, [:_callback_with_string, :pointer], :void
 
   attach_function :_transform, :Gosu_transform, [:double, :double, :double, :double, :double, :double, :double, :double,
                                                  :double, :double, :double, :double, :double, :double, :double, :double,
-                                                 :_callback_with_block
+                                                 :_callback
                                                 ], :void
-  attach_function :_translate, :Gosu_translate, [:double, :double, :_callback_with_block], :void
-  attach_function :_rotate,    :Gosu_rotate,    [:double, :double, :double, :_callback_with_block], :void
-  attach_function :_scale,     :Gosu_scale,     [:double, :double, :double, :double, :_callback_with_block], :void
-  attach_function :_clip_to,   :Gosu_clip_to,   [:double, :double, :double, :double, :_callback_with_block], :void
+  attach_function :_translate, :Gosu_translate, [:double, :double, :_callback], :void
+  attach_function :_rotate,    :Gosu_rotate,    [:double, :double, :double, :_callback], :void
+  attach_function :_scale,     :Gosu_scale,     [:double, :double, :double, :double, :_callback], :void
+  attach_function :_clip_to,   :Gosu_clip_to,   [:double, :double, :double, :double, :_callback], :void
 
-  attach_function :_gl_z,    :Gosu_gl_z,  [:double, :_callback],                        :void
-  attach_function :_gl,      :Gosu_gl,    [:_callback],                                 :void
-  attach_function :_render, :Gosu_render, [:int, :int, :_callback_with_block, :uint32], :pointer
-  attach_function :_record, :Gosu_record, [:int, :int, :_callback_with_block],          :pointer
+  attach_function :_gl_z,    :Gosu_gl_z,  [:double, :_callback],             :void
+  attach_function :_gl,      :Gosu_gl,    [:_callback],                      :void
+  attach_function :_render, :Gosu_render, [:int, :int, :_callback, :uint32], :pointer
+  attach_function :_record, :Gosu_record, [:int, :int, :_callback],          :pointer
 
   attach_function :_button_down, :Gosu_button_down,            [:uint32], :bool
   attach_function :axis,        :Gosu_axis,                    [:uint32], :double
@@ -73,18 +73,11 @@ module Gosu
   attach_function :_available_width,  :Gosu_available_width,  [:pointer], :uint32
   attach_function :_available_height, :Gosu_available_height, [:pointer], :uint32
 
-  def self.language
-    @language_cache ||= (user_languages&.first || "en_US")
-  end
-
   def self.user_languages
     languages = []
     callback = proc { |data, string| languages << string if string }
     _user_languages(callback, nil)
-
-    return languages if languages.size.positive?
-
-    nil
+    languages
   end
 
   def self.gl(z = nil, &block)
@@ -150,7 +143,7 @@ module Gosu
   end
 
   def self.draw_line(x1, y1, c1, x2, y2, c2, z = 0, mode = :default)
-    _draw_line(x1, y1, color_to_drawop(c1), x2, y2, color_to_drawop(c2), z, Gosu.blendmode(mode))
+    _draw_line(x1, y1, color_to_drawop(c1), x2, y2, color_to_drawop(c2), z, Gosu.blend_mode(mode))
   end
 
   def self.draw_quad(x1, y1, c1, x2, y2, c2,
@@ -158,16 +151,16 @@ module Gosu
                      z = 0, mode = :default)
     _draw_quad(x1, y1, color_to_drawop(c1), x2, y2, color_to_drawop(c2),
                x3, y3, color_to_drawop(c3), x4, y4, color_to_drawop(c4),
-               z, Gosu.blendmode(mode))
+               z, Gosu.blend_mode(mode))
   end
 
   def self.draw_triangle(x1, y1, c1, x2, y2, c2, x3, y3, c3, z = 0, mode = :default)
     _draw_triangle(x1, y1, color_to_drawop(c1), x2, y2, color_to_drawop(c2),
-                   x3, y3, color_to_drawop(c3), z, Gosu.blendmode(mode))
+                   x3, y3, color_to_drawop(c3), z, Gosu.blend_mode(mode))
   end
 
   def self.draw_rect(x, y, width, height, c, z = 0, mode = :default)
-    _draw_rect(x, y, width, height, color_to_drawop(c), z, Gosu.blendmode(mode))
+    _draw_rect(x, y, width, height, color_to_drawop(c), z, Gosu.blend_mode(mode))
   end
 
   def self.available_width(window = nil)
@@ -221,8 +214,8 @@ module Gosu
     flags
   end
 
-  def self.font_alignment_flags(mode)
-    case mode
+  def self.font_alignment_flags(flags)
+    case flags
     when :left
       0
     when :right
@@ -232,13 +225,13 @@ module Gosu
     when :justify
       3
     else
-      return mode if mode.is_a?(Numeric)
+      return flags if flags.is_a?(Numeric)
 
-      raise ArgumentError, "No such mode: #{mode}"
+      raise ArgumentError, "No such font alignment: #{flags}"
     end
   end
 
-  def self.blendmode(mode)
+  def self.blend_mode(mode)
     case mode
     when :default
       0
@@ -249,7 +242,7 @@ module Gosu
     else
       return mode if mode.is_a?(Numeric)
 
-      raise ArgumentError, "No such mode: #{mode}"
+      raise ArgumentError, "No such blend mode: #{mode}"
     end
   end
 end

@@ -60,15 +60,15 @@ module Gosu
     end
 
     def draw_rot(text, x, y, z, angle, scale_x = 1, scale_y = 1, c = Gosu::Color::WHITE, mode = :default)
-      Gosu.rotate(angle, x, y) { draw_markup(text.to_s, x, y, z, scale_x, scale_y, Gosu.color_to_drawop(c), Gosu.blendmode(mode)) }
+      Gosu.rotate(angle, x, y) { draw_markup(text.to_s, x, y, z, scale_x, scale_y, Gosu.color_to_drawop(c), Gosu.blend_mode(mode)) }
     end
 
     def draw_text(text, x, y, z, scale_x = 1, scale_y = 1, c = Gosu::Color::WHITE, mode = :default)
-      _font_draw_text(__pointer, text.to_s, x, y, z, scale_x, scale_y, Gosu.color_to_drawop(c), Gosu.blendmode(mode))
+      _font_draw_text(__pointer, text.to_s, x, y, z, scale_x, scale_y, Gosu.color_to_drawop(c), Gosu.blend_mode(mode))
     end
 
     def draw_markup(text, x, y, z, scale_x = 1, scale_y = 1, c = Gosu::Color::WHITE, mode = :default)
-      _font_draw_markup(__pointer, text.to_s, x, y, z, scale_x, scale_y, Gosu.color_to_drawop(c), Gosu.blendmode(mode))
+      _font_draw_markup(__pointer, text.to_s, x, y, z, scale_x, scale_y, Gosu.color_to_drawop(c), Gosu.blend_mode(mode))
     end
 
     def draw_rel(*args)
@@ -76,11 +76,11 @@ module Gosu
     end
 
     def draw_text_rel(text, x, y, z, rel_x, rel_y, scale_x = 1, scale_y = 1, c = Gosu::Color::WHITE, mode = :default)
-      _font_draw_text_rel(__pointer, text.to_s, x, y, z, rel_x, rel_y, scale_x, scale_y, Gosu.color_to_drawop(c), Gosu.blendmode(mode))
+      _font_draw_text_rel(__pointer, text.to_s, x, y, z, rel_x, rel_y, scale_x, scale_y, Gosu.color_to_drawop(c), Gosu.blend_mode(mode))
     end
 
     def draw_markup_rel(text, x, y, z, rel_x, rel_y, scale_x = 1, scale_y = 1, c = Gosu::Color::WHITE, mode = :default)
-      _font_draw_markup_rel(__pointer, text.to_s, x, y, z, rel_x, rel_y, scale_x, scale_y, Gosu.color_to_drawop(c), Gosu.blendmode(mode))
+      _font_draw_markup_rel(__pointer, text.to_s, x, y, z, rel_x, rel_y, scale_x, scale_y, Gosu.color_to_drawop(c), Gosu.blend_mode(mode))
     end
 
     def []=(codepoint, image)

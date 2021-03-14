@@ -3,7 +3,7 @@ module Gosu
     extend FFI::Library
     ffi_lib Gosu::LIBRARY_PATH
 
-    callback :_callback_for_tiles, [:pointer, :pointer], :void
+    callback :_callback_with_image, [:pointer, :pointer], :void
 
     attach_function :_create_image,      :Gosu_Image_create,     [:string, :uint32], :pointer
     attach_function :_destroy_image,     :Gosu_Image_destroy,    [:pointer],         :void
@@ -12,8 +12,8 @@ module Gosu
     attach_function :_create_image_from_text,      :Gosu_Image_create_from_text,         [:string, :string, :double, :int, :double, :uint32, :uint32, :uint32], :pointer
     attach_function :_create_image_from_blob,      :Gosu_Image_create_from_blob,         [:pointer, :ulong, :int, :int, :uint32],                               :pointer
     attach_function :_image_subimage,              :Gosu_Image_create_from_subimage,     [:pointer, :int, :int, :int, :int],                                    :pointer
-    attach_function :_image_load_tiles,            :Gosu_Image_create_from_tiles,        [:string,  :int, :int, :_callback_for_tiles, :pointer, :uint32],       :void
-    attach_function :_image_load_tiles_from_image, :Gosu_Image_create_tiles_from_image,  [:pointer, :int, :int, :_callback_for_tiles, :pointer, :uint32],       :void
+    attach_function :_image_load_tiles,            :Gosu_Image_create_from_tiles,        [:string,  :int, :int, :_callback_with_image, :pointer, :uint32],      :void
+    attach_function :_image_load_tiles_from_image, :Gosu_Image_create_tiles_from_image,  [:pointer, :int, :int, :_callback_with_image, :pointer, :uint32],      :void
 
     attach_function :_image_width,       :Gosu_Image_width,      [:pointer], :int
     attach_function :_image_height,      :Gosu_Image_height,     [:pointer], :int
@@ -108,17 +108,17 @@ module Gosu
     end
 
     def draw(x, y, z, scale_x = 1, scale_y = 1, color = Gosu::Color::WHITE, flags = :default)
-      _image_draw(__pointer, x, y, z, scale_x, scale_y, Gosu.color_to_drawop(color), Gosu.blendmode(flags))
+      _image_draw(__pointer, x, y, z, scale_x, scale_y, Gosu.color_to_drawop(color), Gosu.blend_mode(flags))
     end
 
     def draw_rot(x, y, z, angle, center_x = 0.5, center_y = 0.5, scale_x = 1, scale_y = 1, color = Gosu::Color::WHITE, flags = :default)
-      _image_draw_rot(__pointer, x, y, z, angle, center_x, center_y, scale_x, scale_y, Gosu.color_to_drawop(color), Gosu.blendmode(flags))
+      _image_draw_rot(__pointer, x, y, z, angle, center_x, center_y, scale_x, scale_y, Gosu.color_to_drawop(color), Gosu.blend_mode(flags))
     end
 
     def draw_as_quad(x1, y1, color1, x2, y2, color2, x3, y3, color3, x4, y4, color4, z = 0, mode = :default)
       _image_draw_as_quad(x1, y1, Gosu.color_to_drawop(color1), x2, y2, Gosu.color_to_drawop(color2),
                           x3, y3, Gosu.color_to_drawop(color3), x4, y4, Gosu.color_to_drawop(color4),
-                          z, Gosu.blendmode(mode))
+                          z, Gosu.blend_mode(mode))
     end
 
     def save(filename)
