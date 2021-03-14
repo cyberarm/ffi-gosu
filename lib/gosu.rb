@@ -1,24 +1,36 @@
 require "ffi"
 require "fiddle"
 
-require_relative "gosu/numeric"
+if RUBY_PLATFORM =~ /mswin$|mingw32|mingw64|win32\-|\-win32/
+  binary_path = File.expand_path("../../../gosu/lib", __dir__)#File.dirname(__FILE__)
+  # 64-bit builds of Windows use "x64-mingw32" as RUBY_PLATFORM
+  binary_path += "64" if RUBY_PLATFORM =~ /^x64-/
 
-require_relative "gosu/version"
-require_relative "gosu/constants"
-require_relative "gosu/window"
-require_relative "gosu/image"
-require_relative "gosu/font"
-require_relative "gosu/color"
-require_relative "gosu/text_input"
-require_relative "gosu/gl_tex_info"
-require_relative "gosu/channel"
-require_relative "gosu/sample"
-require_relative "gosu/song"
+  begin
+    # Make DLLs available as shown here:
+    # https://github.com/oneclick/rubyinstaller2/wiki/For-gem-developers
+    require 'ruby_installer'
+    RubyInstaller::Runtime.add_dll_directory(binary_path)
+  rescue LoadError
+    # Add this gem to the PATH on Windows so that bundled DLLs can be found.
+    # When running through Ocra on Windows, we need to be careful to preserve the ENV["PATH"]
+    # encoding (see #385).
+    path_encoding = ENV["PATH"].encoding
+    ENV["PATH"] = "#{binary_path.encode(path_encoding)};#{ENV["PATH"]}"
+  end
 
-require_relative "gosu/compat"
-
+  # Add the correct lib directory for the current version of Ruby (major.minor).
+  $LOAD_PATH.unshift File.join(binary_path, RUBY_VERSION[/^\d+.\d+/])
+end
 
 module Gosu
+  LIBRARY_PATH = [
+    File.expand_path("../../../gosu/build/ffi/libgosu-ffi.so", __dir__),
+    "/usr/local/lib/libgosu-ffi.dylib", # Homebrew on macOS (Intel) or manual installation
+    "/opt/homebrew/lib/libgosu-ffi.dylib", # Homebrew on macOS (Apple Silicon)
+    "gosu-ffi"
+  ]
+
   extend FFI::Library
   ffi_lib Gosu::LIBRARY_PATH
 
@@ -254,3 +266,21 @@ module Gosu
     end
   end
 end
+
+# Individual classes need to be loaded after defining Gosu.check_last_error.
+
+require_relative "gosu/numeric"
+
+require_relative "gosu/channel"
+require_relative "gosu/color"
+require_relative "gosu/constants"
+require_relative "gosu/font"
+require_relative "gosu/gl_tex_info"
+require_relative "gosu/image"
+require_relative "gosu/sample"
+require_relative "gosu/song"
+require_relative "gosu/text_input"
+require_relative "gosu/version"
+require_relative "gosu/window"
+
+require_relative "gosu/compat"
