@@ -3,35 +3,32 @@ module Gosu
     extend FFI::Library
     ffi_lib Gosu::LIBRARY_PATH
 
-    attach_function :_create_color,      :Gosu_Color_create,                [:uint32],                           :uint32
-    attach_function :_create_color_argb, :Gosu_Color_create_argb,           [:uchar, :uchar, :uchar, :uchar],    :uint32
-    attach_function :_create_color_from_ahsv, :Gosu_Color_create_from_ahsv, [:uchar, :double, :double, :double], :uint32
-    attach_function :_create_color_from_hsv, :Gosu_Color_create_from_hsv,   [:double, :double, :double],         :uint32
+    attach_function :Gosu_Color_create,           [:uint32],                           :uint32
+    attach_function :Gosu_Color_create_argb,      [:uchar, :uchar, :uchar, :uchar],    :uint32
+    attach_function :Gosu_Color_create_from_ahsv, [:uchar, :double, :double, :double], :uint32
+    attach_function :Gosu_Color_create_from_hsv,  [:double, :double, :double],         :uint32
 
+    attach_function :Gosu_Color_alpha,     [:uint32], :uchar
+    attach_function :Gosu_Color_red,       [:uint32], :uchar
+    attach_function :Gosu_Color_green,     [:uint32], :uchar
+    attach_function :Gosu_Color_blue,      [:uint32], :uchar
 
-    attach_function :_color_alpha,       :Gosu_Color_alpha,      [:uint32], :uchar
-    attach_function :_color_red,         :Gosu_Color_red,        [:uint32], :uchar
-    attach_function :_color_green,       :Gosu_Color_green,      [:uint32], :uchar
-    attach_function :_color_blue,        :Gosu_Color_blue,       [:uint32], :uchar
+    attach_function :Gosu_Color_set_alpha, [:uint32, :uchar], :uint32
+    attach_function :Gosu_Color_set_red,   [:uint32, :uchar], :uint32
+    attach_function :Gosu_Color_set_green, [:uint32, :uchar], :uint32
+    attach_function :Gosu_Color_set_blue,  [:uint32, :uchar], :uint32
 
-    attach_function :_color_set_alpha,   :Gosu_Color_set_alpha,  [:uint32, :uchar], :uint32
-    attach_function :_color_set_red,     :Gosu_Color_set_red,    [:uint32, :uchar], :uint32
-    attach_function :_color_set_green,   :Gosu_Color_set_green,  [:uint32, :uchar], :uint32
-    attach_function :_color_set_blue,    :Gosu_Color_set_blue,   [:uint32, :uchar], :uint32
+    attach_function :Gosu_Color_value,      [:uint32], :double
+    attach_function :Gosu_Color_saturation, [:uint32], :double
+    attach_function :Gosu_Color_hue,        [:uint32], :double
 
+    attach_function :Gosu_Color_set_value,      [:uint32, :double], :uint32
+    attach_function :Gosu_Color_set_saturation, [:uint32, :double], :uint32
+    attach_function :Gosu_Color_set_hue,        [:uint32, :double], :uint32
 
-    attach_function :_color_value,      :Gosu_Color_value,      [:uint32], :double
-    attach_function :_color_saturation, :Gosu_Color_saturation, [:uint32], :double
-    attach_function :_color_hue,        :Gosu_Color_hue,        [:uint32], :double
-
-    attach_function :_color_set_value,      :Gosu_Color_set_value,      [:uint32, :double], :uint32
-    attach_function :_color_set_saturation, :Gosu_Color_set_saturation, [:uint32, :double], :uint32
-    attach_function :_color_set_hue,        :Gosu_Color_set_hue,        [:uint32, :double], :uint32
-
-
-    attach_function :_color_bgr,  :Gosu_Color_bgr,  [:uint32], :uint32
-    attach_function :_color_abgr, :Gosu_Color_abgr, [:uint32], :uint32
-    attach_function :_color_argb, :Gosu_Color_argb, [:uint32], :uint32
+    attach_function :Gosu_Color_bgr,  [:uint32], :uint32
+    attach_function :Gosu_Color_abgr, [:uint32], :uint32
+    attach_function :Gosu_Color_argb, [:uint32], :uint32
 
     # Gosu::Color is stored as an unsigned int in C
     # this is used for {Gosu::Image#to_blob} and {Gosu::Image.from_blob}
@@ -50,90 +47,96 @@ module Gosu
     end
 
     def self.from_ahsv(alpha, h, s, v)
-      Gosu::Color.new(_create_color_from_ahsv(alpha.clamp(0.0, 255.0), h % 360.0, s.clamp(0.0, 1.0), v.clamp(0.0, 1.0)))
+      __color = Gosu_Color_create_from_ahsv(alpha.clamp(0.0, 255.0), h % 360.0, s.clamp(0.0, 1.0), v.clamp(0.0, 1.0))
+      Gosu.check_last_error
+      Gosu::Color.new(__color)
     end
 
     def self.from_hsv(h, s, v)
-      Gosu::Color.new(_create_color_from_hsv(h % 360.0, s.clamp(0.0, 1.0), v.clamp(0.0, 1.0)))
+      __color = Gosu_Color_create_from_hsv(h % 360.0, s.clamp(0.0, 1.0), v.clamp(0.0, 1.0))
+      Gosu.check_last_error
+      Gosu::Color.new(__color)
     end
 
     def initialize(*args)
       case args.size
       when 1
-        @__color = _create_color(args.first)
+        @__color = Gosu_Color_create(args.first)
+        Gosu.check_last_error
       when 4
-        @__color = _create_color_argb(args[0].clamp(0, 255), args[1].clamp(0, 255), args[2].clamp(0, 255), args[3].clamp(0, 255))
+        @__color = Gosu_Color_create_argb(args[0].clamp(0, 255), args[1].clamp(0, 255), args[2].clamp(0, 255), args[3].clamp(0, 255))
+        Gosu.check_last_error
       else
-        raise "Error"
+        raise ArgumentError
       end
     end
 
     def alpha
-      _color_alpha(@__color)
+      Gosu_Color_alpha(@__color).tap { Gosu.check_last_error }
     end
 
     def alpha=(value)
-      @__color = _color_set_alpha(@__color, value.clamp(0, 255))
+      @__color = Gosu_Color_set_alpha(@__color, value.clamp(0, 255)).tap { Gosu.check_last_error }
     end
 
     def red
-      _color_red(@__color)
+      Gosu_Color_red(@__color).tap { Gosu.check_last_error }
     end
 
     def red=(value)
-      @__color = _color_set_red(@__color, value.clamp(0, 255))
+      @__color = Gosu_Color_set_red(@__color, value.clamp(0, 255)).tap { Gosu.check_last_error }
     end
 
     def green
-      _color_green(@__color)
+      Gosu_Color_green(@__color).tap { Gosu.check_last_error }
     end
 
     def green=(value)
-      @__color = _color_set_green(@__color, value.clamp(0, 255))
+      @__color = Gosu_Color_set_green(@__color, value.clamp(0, 255)).tap { Gosu.check_last_error }
     end
 
     def blue
-      _color_blue(@__color)
+      Gosu_Color_blue(@__color).tap { Gosu.check_last_error }
     end
 
     def blue=(value)
-      @__color = _color_set_blue(@__color, value.clamp(0, 255))
+      @__color = Gosu_Color_set_blue(@__color, value.clamp(0, 255)).tap { Gosu.check_last_error }
     end
 
     def value
-      _color_value(@__color)
+      Gosu_Color_value(@__color).tap { Gosu.check_last_error }
     end
 
     def value=(value)
-      _color_set_value(@__color, value.clamp(0.0, 1.0))
+      @__color = Gosu_Color_set_value(@__color, value.clamp(0.0, 1.0)).tap { Gosu.check_last_error }
     end
 
     def saturation
-      _color_saturation(@__color)
+      Gosu_Color_saturation(@__color).tap { Gosu.check_last_error }
     end
 
     def saturation=(value)
-      _color_set_saturation(@__color, value.clamp(0.0, 1.0))
+      @__color = Gosu_Color_set_saturation(@__color, value.clamp(0.0, 1.0)).tap { Gosu.check_last_error }
     end
 
     def hue
-      _color_hue(@__color)
+      Gosu_Color_hue(@__color).tap { Gosu.check_last_error }
     end
 
     def hue=(value)
-      _color_set_hue(@__color, value % 360.0)
+      @__color = Gosu_Color_set_hue(@__color, value % 360.0).tap { Gosu.check_last_error }
     end
 
     def bgr
-      _color_bgr(@__color)
+      Gosu_Color_bgr(@__color).tap { Gosu.check_last_error }
     end
 
     def abgr
-      _color_abgr(@__color)
+      Gosu_Color_abgr(@__color).tap { Gosu.check_last_error }
     end
 
     def argb
-      _color_argb(@__color)
+      Gosu_Color_argb(@__color).tap { Gosu.check_last_error }
     end
 
     def gl

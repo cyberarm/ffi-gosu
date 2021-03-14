@@ -27,7 +27,8 @@ module Gosu
     end
 
     def self.release(pointer)
-      Gosu::Image._image_gl_tex_info_destroy(pointer)
+      Gosu::Image.Gosu_Image_gl_tex_info_destroy(pointer)
+      Gosu.check_last_error
     end
   end
 end
