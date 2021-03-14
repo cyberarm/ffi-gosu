@@ -319,9 +319,9 @@ module Gosu
     # Gosu.undef_method(:"#{const}")
   end
 
-  attach_function :VERSION, :Gosu_version, [], :string
-  attach_function :LICENSES, :Gosu_licenses, [], :string
+  attach_function :Gosu_version, [], :string
+  attach_function :Gosu_licenses, [], :string
 
-  Gosu.const_set("VERSION", Gosu.send(:VERSION))
-  Gosu.const_set("LICENSES", Gosu.send(:LICENSES))
+  Gosu.const_set("VERSION", Gosu_version())
+  Gosu.const_set("LICENSES", Gosu_licenses())
 end
