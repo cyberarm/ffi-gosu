@@ -3,17 +3,17 @@ module Gosu
     extend FFI::Library
     ffi_lib Gosu::LIBRARY_PATH
 
-    attach_function :_destroy_channel, :Gosu_Channel_destroy,  [:pointer], :void
+    attach_function :Gosu_Channel_destroy, [:pointer], :void
 
-    attach_function :_channel_playing, :Gosu_Channel_playing, [:pointer], :bool
-    attach_function :_channel_pause,   :Gosu_Channel_pause,   [:pointer], :void
-    attach_function :_channel_paused,  :Gosu_Channel_paused,  [:pointer], :bool
-    attach_function :_channel_resume,  :Gosu_Channel_resume,  [:pointer], :void
-    attach_function :_channel_stop,   :Gosu_Channel_stop,     [:pointer], :void
+    attach_function :Gosu_Channel_playing, [:pointer], :bool
+    attach_function :Gosu_Channel_pause,   [:pointer], :void
+    attach_function :Gosu_Channel_paused,  [:pointer], :bool
+    attach_function :Gosu_Channel_resume,  [:pointer], :void
+    attach_function :Gosu_Channel_stop,    [:pointer], :void
 
-    attach_function :_channel_set_volume, :Gosu_Channel_set_volume, [:pointer, :double], :void
-    attach_function :_channel_set_speed,  :Gosu_Channel_set_speed,  [:pointer, :double], :void
-    attach_function :_channel_set_pan,   :Gosu_Channel_set_pan,     [:pointer, :double], :void
+    attach_function :Gosu_Channel_set_volume, [:pointer, :double], :void
+    attach_function :Gosu_Channel_set_speed,  [:pointer, :double], :void
+    attach_function :Gosu_Channel_set_pan,    [:pointer, :double], :void
 
     def initialize(pointer)
       @__channel = pointer
@@ -24,39 +24,46 @@ module Gosu
     end
 
     def playing?
-      _channel_playing(@__channel)
+      Gosu_Channel_playing(@__channel).tap { Gosu.check_last_error }
     end
 
     def pause
-      _channel_pause(@__channel)
+      Gosu_Channel_pause(@__channel)
+      Gosu.check_last_error
     end
 
     def paused?
-      _channel_paused(@__channel)
+      Gosu_Channel_paused(@__channel).tap { Gosu.check_last_error }
     end
 
     def resume
-      _channel_resume(@__channel)
+      Gosu_Channel_resume(@__channel)
+      Gosu.check_last_error
     end
 
     def stop
-      _channel_stop(@__channel)
+      Gosu_Channel_stop(@__channel)
+      Gosu.check_last_error
     end
 
     def volume=(double)
-      _channel_set_volume(@__channel, double.clamp(0.0, 1.0))
+      Gosu_Channel_set_volume(@__channel, double.clamp(0.0, 1.0))
+      Gosu.check_last_error
     end
 
     def speed=(double)
-      _channel_set_speed(@__channel, double.clamp(0.0, 1.0))
+      Gosu_Channel_set_speed(@__channel, double.clamp(0.0, 1.0))
+      Gosu.check_last_error
     end
 
     def pan=(double)
-      _channel_set_pan(@__channel, double.clamp(0.0, 1.0))
+      Gosu_Channel_set_pan(@__channel, double.clamp(-1.0, 1.0))
+      Gosu.check_last_error
     end
-  end
 
-  def free_object
-    _destroy_channel(@__channel)
+    def free_object
+      Gosu_Channel_destroy(@__channel)
+      Gosu.check_last_error
+    end
   end
 end
