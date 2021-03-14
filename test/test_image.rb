@@ -51,4 +51,9 @@ class TestImage < Minitest::Test
     end
     assert_image_matches "test_image/insert", canvas, 1.00
   end
+
+  def test_image_error
+    err = assert_raises(RuntimeError) { Gosu::Image.new("/file/does/not/exist") }
+    assert_match "/file/does/not/exist", err.message
+  end
 end

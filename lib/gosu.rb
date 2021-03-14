@@ -73,6 +73,8 @@ module Gosu
   attach_function :_available_width,  :Gosu_available_width,  [:pointer], :uint32
   attach_function :_available_height, :Gosu_available_height, [:pointer], :uint32
 
+  attach_function :Gosu_last_error, [], :string
+
   def self.user_languages
     languages = []
     callback = proc { |data, string| languages << string if string }
@@ -243,6 +245,12 @@ module Gosu
       return mode if mode.is_a?(Numeric)
 
       raise ArgumentError, "No such blend mode: #{mode}"
+    end
+  end
+
+  def self.check_last_error
+    if (err = Gosu_last_error())
+      raise err
     end
   end
 end
