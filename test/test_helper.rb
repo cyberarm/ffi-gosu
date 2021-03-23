@@ -44,16 +44,12 @@ module TestHelper
     TestHelper.media_path(fname)
   end
 
-  def skip_on_appveyor
-    skip if ENV["APPVEYOR"]
+  def skip_on_github
+    skip if ENV["GITHUB_WORKFLOW"]
   end
 
-  def skip_on_travis
-    skip if ENV["TRAVIS"]
-  end
-
-  def skip_on_ci
-    skip if ENV["APPVEYOR"] or ENV["TRAVIS"]
+  def skip_on_github_windows
+    skip if ENV["GITHUB_WORKFLOW"] && RUBY_PLATFORM =~ /mswin$|mingw32|mingw64|win32\-|\-win32/
   end
 
   def actual_from_expected_filename(expected)

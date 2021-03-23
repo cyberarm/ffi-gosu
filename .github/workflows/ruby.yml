@@ -1,6 +1,9 @@
 name: Ruby CI
 
-on: [push, pull_request]
+on:
+  push:
+    branches: [master]
+  pull_request:
 
 env:
   GOSU_GIT_BRANCH: master
@@ -56,7 +59,7 @@ jobs:
       uses: microsoft/setup-msbuild@v1.0.2
     - name: Build Gosu with msbuild
       run: |
-        echo $PWD
+        cd ..
         cd ..
         git clone --depth=1 --single-branch --branch ${{ env.GOSU_GIT_BRANCH }} https://github.com/gosu/gosu
         cd gosu
@@ -64,7 +67,7 @@ jobs:
         msbuild windows/Gosu.sln /property:Configuration=Release
         cd ..
 
-        cd ../ffi-gosu
+        cd ffi-gosu
     - name: Test with rake
       run: |
         gem install bundler
