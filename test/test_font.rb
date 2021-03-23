@@ -31,8 +31,8 @@ class TestFont < Minitest::Test
   end
 
   def test_draw_and_draw_rel
-    # Gosu.render does not work on Appveyor.
-    skip_on_appveyor
+    # Gosu.render does not work on Windows CI.
+    skip_on_github_windows
 
     font = Gosu::Font.new(10, name: media_path("daniel.otf"))
 
@@ -52,8 +52,8 @@ class TestFont < Minitest::Test
   end
 
   def test_deprecated_features
-    # Gosu.render does not work on Appveyor.
-    skip_on_appveyor
+    # Gosu.render does not work on Windows CI.
+    skip_on_github_windows
 
     font = Gosu::Font.new(20, name: media_path("daniel.ttf"))
 
