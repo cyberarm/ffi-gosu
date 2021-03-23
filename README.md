@@ -1,7 +1,7 @@
 [![Actions Status](https://github.com/cyberarm/ffi-gosu/workflows/Ruby%20CI/badge.svg?branch=master)](https://github.com/cyberarm/ffi-gosu/actions)
 # Gosu - FFI Edition
 
-This gem interfaces with the [currently under development](https://github.com/gosu/gosu/pull/501) C API for the [Gosu game library](https://libgosu.org).
+This gem interfaces with the C API of the [Gosu game library](https://libgosu.org).
 
 ## Installation
 
@@ -21,7 +21,7 @@ Or install it yourself as:
 
 ## Usage
 
-Where possible this gem replicates the [Ruby/Gosu gem](https://github.com/gosu/gosu), however, deprecated methods and constructors are not implemented.
+Where possible this gem replicates the [Ruby/Gosu gem](https://github.com/gosu/gosu), however, deprecated methods and constructors that take in a `window` reference are not implemented.
 
 ## Development
 
