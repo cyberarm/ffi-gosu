@@ -251,18 +251,26 @@ module Gosu
   end
 
   def self.available_width(window = nil)
+    raise TypeError, "Instance of Gosu::Window or nil expected, got: #{window.class}" unless window && window.is_a?(Gosu::Window)
+    window = window.__pointer if window
     Gosu_available_width(window).tap { Gosu.check_last_error }
   end
 
   def self.available_height(window = nil)
+    raise TypeError, "Instance of Gosu::Window or nil expected, got: #{window.class}" unless window && window.is_a?(Gosu::Window)
+    window = window.__pointer if window
     Gosu_available_height(window).tap { Gosu.check_last_error }
   end
 
   def self.screen_width(window = nil)
+    raise TypeError, "Instance of Gosu::Window or nil expected, got: #{window.class}" unless window && window.is_a?(Gosu::Window)
+    window = window.__pointer if window
     Gosu_screen_width(window).tap { Gosu.check_last_error }
   end
 
   def self.screen_height(window = nil)
+    raise TypeError, "Instance of Gosu::Window or nil expected, got: #{window.class}" unless window && window.is_a?(Gosu::Window)
+    window = window.__pointer if window
     Gosu_screen_height(window).tap { Gosu.check_last_error }
   end
 
