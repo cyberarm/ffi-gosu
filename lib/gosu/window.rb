@@ -278,9 +278,11 @@ module Gosu
     end
 
     def tick
-      Gosu_Window_tick(__pointer).tap { Gosu.check_last_error }
+      value = Gosu_Window_tick(__pointer).tap { Gosu.check_last_error }
 
       raise @__exception if defined?(@__exception)
+
+      value
     end
 
     def minimize
