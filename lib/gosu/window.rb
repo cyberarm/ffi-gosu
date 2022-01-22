@@ -78,49 +78,28 @@ module Gosu
       @memory_pointer = FFI::AutoPointer.new(__window, Gosu::Window.method(:release))
       @text_input = nil
 
-      @__update_proc                  = proc { |data| protected_update }
-      @__draw_proc                    = proc { |data| protected_draw }
-      @__button_down_proc             = proc { |data, id| protected_button_down(id) }
-      @__button_up_proc               = proc { |data, id| protected_button_up(id) }
-      @__gamepad_connected_proc       = proc { |data, id| protected_gamepad_connected(id) }
-      @__gamepad_disconnected_proc    = proc { |data, id| protected_gamepad_disconnected(id) }
-      @__drop_proc                    = proc { |data, filename| protected_drop(filename) }
-      @__needs_redraw_proc            = proc { |data| protected_needs_redraw? }
-      @__needs_cursor_proc            = proc { |data| protected_needs_cursor? }
-      @__capture_cursor_proc          = proc { |data| protected_capture_cursor? }
-      @__hit_test_proc                = proc { |data, x, y| protected_hit_test(x, y) }
-      @__close_proc                   = proc { |data| protected_close }
-      @__gain_focus_proc              = proc { |data| protected_gain_focus }
-      @__lose_focus_proc              = proc { |data| protected_lose_focus }
+      {
+        update: [],
+        draw: [],
+        button_down: [:id],
+        button_up: [:id],
+        gamepad_connected: [:id],
+        gamepad_disconnected: [:id],
+        drop: [:filename],
+        needs_redraw?: [],
+        needs_cursor?: [],
+        # capture_cursor?: [],
+        # hit_test: [:x, :y],
+        close: [],
+        gain_focus: [],
+        lose_focus: []
+      }.each do |callback, args|
+        callback_safename = callback.to_s.sub("?", "")
 
-      Gosu_Window_set_update(__pointer, @__update_proc, nil)
-      Gosu.check_last_error
-      Gosu_Window_set_draw(__pointer, @__draw_proc, nil)
-      Gosu.check_last_error
-      Gosu_Window_set_button_down(__pointer, @__button_down_proc, nil)
-      Gosu.check_last_error
-      Gosu_Window_set_button_up(__pointer, @__button_up_proc, nil)
-      Gosu.check_last_error
-      Gosu_Window_set_gamepad_connected(__pointer, @__gamepad_connected_proc, nil)
-      Gosu.check_last_error
-      Gosu_Window_set_gamepad_disconnected(__pointer, @__gamepad_disconnected_proc, nil)
-      Gosu.check_last_error
-      Gosu_Window_set_drop(__pointer, @__drop_proc, nil)
-      Gosu.check_last_error
-      Gosu_Window_set_needs_redraw(__pointer, @__needs_redraw_proc, nil)
-      Gosu.check_last_error
-      Gosu_Window_set_needs_cursor(__pointer, @__needs_cursor_proc, nil)
-      Gosu.check_last_error
-      #Gosu_Window_set_capture_cursor(__pointer, @__capture_cursor_proc, nil)
-      #Gosu.check_last_error
-      #Gosu_Window_set_hit_test(__pointer, @__hit_test_proc, nil)
-      #Gosu.check_last_error
-      Gosu_Window_set_close(__pointer, @__close_proc, nil)
-      Gosu.check_last_error
-      Gosu_Window_set_gain_focus(__pointer, @__gain_focus_proc, nil)
-      Gosu.check_last_error
-      Gosu_Window_set_lose_focus(__pointer, @__lose_focus_proc, nil)
-      Gosu.check_last_error
+        instance_eval("@__#{callback_safename}_proc = proc { |#{[:data, args].flatten.join(',')}| protected_#{callback}(#{args.join(',')}) }")
+        send(:"Gosu_Window_set_#{callback_safename}", __pointer, instance_variable_get(:"@__#{callback_safename}_proc"), nil)
+        Gosu.check_last_error
+      end
     end
 
     # Returns FFI pointer of C side Gosu::Window
