@@ -7,70 +7,74 @@ on:
 
 env:
   GOSU_GIT_BRANCH: master
+  LTS_UBUNTU: ubuntu-18.04
 
 jobs:
-  linux:
-    runs-on: ubuntu-latest
+  test:
+    strategy:
+      matrix:
+        platform: [ubuntu-18.04, ubuntu-latest, windows-latest]
+        ruby-version: ['2.7', '3.0', '3.1']
+    runs-on: ${{ matrix.platform }}
 
     steps:
     - uses: actions/checkout@v2
-    - name: Set up Ruby 3.0
-      uses: ruby/setup-ruby@v1
-      with:
-        ruby-version: 3.0.0
-    - name: Install Gosu dependencies
+
+
+    - name: Install Gosu dependencies (Ubuntu)
+      if: matrix.platform == 'ubuntu-18.04' || matrix.platform == 'ubuntu-latest'
       run: |
         sudo apt-get update -y -qq
-        sudo apt-get install -y build-essential libsdl2-dev libgl1-mesa-dev libopenal-dev libgmp-dev libfontconfig1-dev cmake xvfb pulseaudio
-    - name: Build and install Gosu
+        sudo apt-get install -y build-essential libsdl2-dev libgl1-mesa-dev libgmp-dev libfontconfig1-dev cmake xvfb pulseaudio
+
+    - name: Set up Ruby
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: ${{ matrix.ruby-version }}
+        bundler-cache: false # runs 'bundle install' and caches installed gems automatically
+
+    - name: Add msbuild to PATH (Windows)
+      if: matrix.platform == 'windows-latest'
+      uses: microsoft/setup-msbuild@v1.1
+
+    - name: Fetch Gosu
       run: |
         echo $PWD
         cd ..
         git clone --depth=1 --single-branch --branch ${{ env.GOSU_GIT_BRANCH }} https://github.com/gosu/gosu
-        cd gosu
+
+    - name: Build and install Gosu (Linux)
+      if: matrix.platform == 'ubuntu-18.04' || matrix.platform == 'ubuntu-latest'
+      run: |
+        echo $PWD
+        cd ../gosu
 
         mkdir -p build
         cd build
         cmake -D CMAKE_INSTALL_PREFIX:PATH=/usr ..
         make
         sudo make install
-        cd ..
 
-        cd ../ffi-gosu
-    - name: Test with rake
+    - name: Build Gosu with msbuild (Windows)
+      if: matrix.platform == 'windows-latest'
       run: |
-        gem install bundler
-        bundle install --jobs 4 --retry 3
+        echo $PWD
 
+        cd ..
+        cd gosu
+
+        msbuild windows/Gosu.sln /property:Configuration=Release
+
+    - name: Install dependencies
+      run: gem install bundler && bundle install --jobs 4 --retry 3
+
+    - name: Run tests (Linux)
+      if: matrix.platform == 'ubuntu-18.04' || matrix.platform == 'ubuntu-latest'
+      run: |
         sudo usermod -a -G audio $USER
 
         xvfb-run bundle exec rake
 
-  windows:
-    runs-on: windows-latest
-
-    steps:
-    - uses: actions/checkout@v2
-    - name: Set up Ruby 3.0
-      uses: ruby/setup-ruby@v1
-      with:
-        ruby-version: 3.0.0
-    - name: Add msbuild to PATH
-      uses: microsoft/setup-msbuild@v1.0.2
-    - name: Build Gosu with msbuild
-      run: |
-        cd ..
-        cd ..
-        git clone --depth=1 --single-branch --branch ${{ env.GOSU_GIT_BRANCH }} https://github.com/gosu/gosu
-        cd gosu
-
-        msbuild windows/Gosu.sln /property:Configuration=Release
-        cd ..
-
-        cd ffi-gosu
-    - name: Test with rake
-      run: |
-        gem install bundler
-        bundle install --jobs 4 --retry 3
-
-        bundle exec rake
+    - name: Run tests (Windows)
+      if: matrix.platform == 'windows-latest'
+      run: bundle exec rake
