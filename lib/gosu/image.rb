@@ -120,7 +120,7 @@ module Gosu
       Gosu.check_last_error
     end
 
-    def draw_rot(x, y, z, angle, center_x = 0.5, center_y = 0.5, scale_x = 1, scale_y = 1, color = Gosu::Color::WHITE, flags = :default)
+    def draw_rot(x, y, z, angle = 0, center_x = 0.5, center_y = 0.5, scale_x = 1, scale_y = 1, color = Gosu::Color::WHITE, flags = :default)
       Gosu_Image_draw_rot(__pointer, x, y, z, angle, center_x, center_y, scale_x, scale_y, Gosu.color_to_drawop(color), Gosu.blend_mode(flags))
       Gosu.check_last_error
     end

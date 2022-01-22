@@ -20,7 +20,7 @@ module Gosu
   class Window
     # Compat code taken from gosu/gosu
 
-    %w(update draw needs_redraw? needs_cursor? capture_cursor? hit_test
+    %w(update draw needs_redraw? needs_cursor? capture_cursor? hit_test gain_focus lose_focus
       lose_focus button_down button_up gamepad_connected gamepad_disconnected drop close).each do |callback|
       define_method "protected_#{callback}" do |*args|
         begin

@@ -24,6 +24,8 @@ module Gosu
     #attach_function :Gosu_Window_set_capture_cursor,       [:pointer, :_callback_returns_bool, :pointer],              :void
     #attach_function :Gosu_Window_set_hit_test,             [:pointer, :_callback_hit_test_returns_unsigned, :pointer], :void
     attach_function :Gosu_Window_set_close,                [:pointer, :_callback, :pointer],                           :void
+    attach_function :Gosu_Window_set_gain_focus,           [:pointer, :_callback, :pointer],                           :void
+    attach_function :Gosu_Window_set_lose_focus,           [:pointer, :_callback, :pointer],                           :void
 
     # Enable gosu's default button_down fullscreen toggle
     attach_function :Gosu_Window_default_button_down, [:pointer, :uint32], :void
@@ -88,6 +90,8 @@ module Gosu
       @__capture_cursor_proc          = proc { |data| protected_capture_cursor? }
       @__hit_test_proc                = proc { |data, x, y| protected_hit_test(x, y) }
       @__close_proc                   = proc { |data| protected_close }
+      @__gain_focus_proc              = proc { |data| protected_gain_focus }
+      @__lose_focus_proc              = proc { |data| protected_lose_focus }
 
       Gosu_Window_set_update(__pointer, @__update_proc, nil)
       Gosu.check_last_error
@@ -112,6 +116,10 @@ module Gosu
       #Gosu_Window_set_hit_test(__pointer, @__hit_test_proc, nil)
       #Gosu.check_last_error
       Gosu_Window_set_close(__pointer, @__close_proc, nil)
+      Gosu.check_last_error
+      Gosu_Window_set_gain_focus(__pointer, @__gain_focus_proc, nil)
+      Gosu.check_last_error
+      Gosu_Window_set_lose_focus(__pointer, @__lose_focus_proc, nil)
       Gosu.check_last_error
     end
 
@@ -167,6 +175,12 @@ module Gosu
 
     def close
       close!
+    end
+
+    def gain_focus
+    end
+
+    def lose_focus
     end
 
     def caption
