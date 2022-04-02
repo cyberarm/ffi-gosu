@@ -8,7 +8,6 @@ module Gosu
 
     attach_function :Gosu_Font_name,   [:pointer], :string
     attach_function :Gosu_Font_height, [:pointer], :int
-    attach_function :Gosu_Font_flags,  [:pointer], :uint32
 
     attach_function :Gosu_Font_text_width,   [:pointer, :string], :double
     attach_function :Gosu_Font_markup_width, [:pointer, :string], :double
@@ -41,10 +40,6 @@ module Gosu
 
     def height
       Gosu_Font_height(__pointer).tap { Gosu.check_last_error }
-    end
-
-    def flags
-      Gosu_Font_flags(__pointer).tap { Gosu.check_last_error }
     end
 
     def text_width(text, scale_x = 1)
@@ -89,8 +84,10 @@ module Gosu
     end
 
     def []=(codepoint, image)
-      Gosu_Font_set_image(__pointer, codepoint, self.flags, image.__pointer)
-      Gosu.check_last_error
+      Gosu::FF_COMBINATIONS.times do |font_flags|
+        Gosu_Font_set_image(__pointer, codepoint, font_flags, image.__pointer)
+        Gosu.check_last_error
+      end
     end
 
     def self.release(pointer)
