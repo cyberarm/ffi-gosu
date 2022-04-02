@@ -287,10 +287,10 @@ module Gosu
   end
 
   def self.window_flags(fullscreen: false, resizable: false, borderless: false)
-    flags = 0
-    flags |= 1 if fullscreen
-    flags |= 2 if resizable
-    flags |= 4 if borderless
+    flags = Gosu::WF_WINDOWED
+    flags |= Gosu::WF_FULLSCREEN if fullscreen
+    flags |= Gosu::WF_RESIZABLE if resizable
+    flags |= Gosu::WF_BORDERLESS if borderless
 
     flags
   end
@@ -299,17 +299,17 @@ module Gosu
   def self.image_flags(retro: false, tileable: false)
     flags = 0
 
-    flags = 30 if tileable
-    flags |= 1 << 5 if retro
+    flags |= Gosu::IF_RETRO if retro
+    flags |= Gosu::IF_TILEABLE if tileable
 
     flags
   end
 
   def self.font_flags(bold, italic, underline)
-    flags = 0x0
-    flags |= 1 if bold
-    flags |= 2 if italic
-    flags |= 4 if underline
+    flags = 0
+    flags |= Gosu::FF_BOLD if bold
+    flags |= Gosu::FF_ITALIC if italic
+    flags |= Gosu::FF_UNDERLINE if underline
 
     flags
   end
@@ -317,13 +317,13 @@ module Gosu
   def self.font_alignment_flags(flags)
     case flags
     when :left
-      0
+      Gosu::AL_LEFT
     when :right
-      1
+      Gosu::AL_RIGHT
     when :center
-      2
+      Gosu::AL_CENTER
     when :justify
-      3
+      Gosu::AL_JUSTIFY
     else
       return flags if flags.is_a?(Numeric)
 
@@ -334,11 +334,11 @@ module Gosu
   def self.blend_mode(mode)
     case mode
     when :default
-      0
+      Gosu::BM_DEFAULT
     when :additive, :add
-      1
+      Gosu::BM_INTERPOLATE
     when :multiply
-      2
+      Gosu::BM_MULTIPLY
     else
       return mode if mode.is_a?(Numeric)
 

@@ -286,6 +286,11 @@ module Gosu
   ]
 
   constants = constants + [
+    "WF_WINDOWED",
+    "WF_FULLSCREEN",
+    "WF_RESIZABLE",
+    "WF_BORDERLESS",
+
     "BM_DEFAULT",
     "BM_INTERPOLATE",
     "BM_ADD",
