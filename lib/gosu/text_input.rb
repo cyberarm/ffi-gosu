@@ -18,8 +18,9 @@ module Gosu
     attach_function :Gosu_TextInput_set_filter,        [:pointer, :_callback_with_string, :pointer], :void
     attach_function :Gosu_TextInput_set_filter_result, [:pointer, :string],                          :void
 
-    attach_function :Gosu_TextInput_delete_backward, [:pointer], :void
-    attach_function :Gosu_TextInput_delete_forward,  [:pointer], :void
+    attach_function :Gosu_TextInput_insert_text,     [:pointer, :string], :void
+    attach_function :Gosu_TextInput_delete_backward, [:pointer],          :void
+    attach_function :Gosu_TextInput_delete_forward,  [:pointer],          :void
 
     def initialize
       __text_input = Gosu_TextInput_create()
@@ -64,6 +65,11 @@ module Gosu
 
     def filter(text)
       return text
+    end
+
+    def insert_text(text)
+      Gosu_TextInput_insert_text(__pointer, text)
+      Gosu.check_last_error
     end
 
     def delete_backward
