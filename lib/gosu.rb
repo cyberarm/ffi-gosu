@@ -63,6 +63,9 @@ module Gosu
   attach_function :Gosu_button_name,       [:uint32], :string
   attach_function :Gosu_gamepad_name,      [:uint32], :string
 
+  attach_function :Gosu_clipboard,      [], :string
+  attach_function :Gosu_set_clipboard,  [:string], :void
+
   attach_function :Gosu_draw_line,     [:double, :double, :uint32, :double, :double, :uint32, :double, :uint32], :void
   attach_function :Gosu_draw_triangle, [:double, :double, :uint32, :double, :double, :uint32,
                                         :double, :double, :uint32, :double, :uint32],                            :void
@@ -199,6 +202,15 @@ module Gosu
   def self.gamepad_name(id)
     name = Gosu_gamepad_name(id).tap { Gosu.check_last_error }
     name&.empty? ? nil : name
+  end
+
+  def self.clipboard
+    Gosu_clipboard().tap { Gosu.check_last_error }
+  end
+
+  def self.clipboard=(text)
+    Gosu_set_clipboard(text)
+    Gosu.check_last_error
   end
 
   def self.draw_line(x1, y1, c1, x2, y2, c2, z = 0, mode = :default)
