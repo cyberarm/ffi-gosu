@@ -49,7 +49,7 @@ module TestHelper
   end
 
   def skip_on_github_windows
-    skip if ENV["GITHUB_WORKFLOW"] && RUBY_PLATFORM =~ /mswin$|mingw32|mingw64|win32\-|\-win32/
+    skip if ENV["GITHUB_WORKFLOW"] && RUBY_PLATFORM =~ /mswin$|mingw|win32\-|\-win32/
   end
 
   def actual_from_expected_filename(expected)
