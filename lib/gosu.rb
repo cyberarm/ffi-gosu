@@ -1,5 +1,4 @@
 require "ffi"
-require "fiddle"
 
 if RUBY_PLATFORM =~ /mswin$|mingw|win32\-|\-win32/
   binary_path = File.expand_path("../../gosu/lib", __dir__)#File.dirname(__FILE__)
@@ -26,6 +25,7 @@ end
 module Gosu
   LIBRARY_PATH = [
     File.expand_path("../../gosu/build/ffi/libgosu-ffi.so", __dir__),
+    File.expand_path("../../gosu/lib64/gosu-ffi.dll", __dir__),
     "/usr/local/lib/libgosu-ffi.dylib", # Homebrew on macOS (Intel) or manual installation
     "/opt/homebrew/lib/libgosu-ffi.dylib", # Homebrew on macOS (Apple Silicon)
     "gosu-ffi"

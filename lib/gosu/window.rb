@@ -56,6 +56,8 @@ module Gosu
     attach_function :Gosu_Window_set_resizable,       [:pointer, :bool],             :void
     attach_function :Gosu_Window_set_borderless,      [:pointer, :bool],             :void
 
+    attach_function :Gosu_Window_sdl_window,          [:pointer],                    :pointer
+
     #attach_function :Gosu_Window_minimize,            [:pointer],                    :void
     #attach_function :Gosu_Window_restore,             [:pointer],                    :void
     #attach_function :Gosu_Window_maximize,            [:pointer],                    :void
@@ -296,6 +298,10 @@ module Gosu
     def close!
       Gosu_Window_close_immediately(__pointer)
       Gosu.check_last_error
+    end
+
+    def sdl_window
+      Gosu_Window_sdl_window(__pointer).tap { Gosu.check_last_error }
     end
 
     def self.release(pointer)
